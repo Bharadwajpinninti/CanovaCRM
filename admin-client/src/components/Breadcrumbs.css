@@ -1,0 +1,32 @@
+/* Wrapper to keep them aligned */
+.breadcrumb-wrapper {
+  display: flex;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+}
+
+/* "Home" Link Style */
+.crumb-link {
+  text-decoration: none;
+  color: #6B7280; /* Grey */
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.crumb-link:hover {
+  color: #2563EB; /* Blue on hover */
+}
+
+/* The ">" Arrow */
+.crumb-separator {
+  color: #9CA3AF; /* Light Grey */
+  margin: 0 8px;
+}
+
+/* Current Page Name */
+.crumb-current {
+  color: #1F2937; /* Dark Black/Grey */
+  font-weight: 600;
+}

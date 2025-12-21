@@ -1,0 +1,53 @@
+/* --- HEADER --- */
+.top-header {
+  padding: 20px 40px;        /* Increased top/bottom padding slightly for more "space" */
+  background-color: white;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  
+  /* 👇 THIS ADDS THE HORIZONTAL LINE */
+  border-bottom: 1px solid #d0d2d6; 
+}
+
+/* --- CONTAINER (Relative Parent) --- */
+.search-container {
+  position: relative;
+  width: 400px;
+}
+
+/* --- ICON (Absolute Child) --- */
+.search-icon {
+  position: absolute;
+  left: 8px;           /* 8px from the left edge */
+  top: 50%;            /* Center vertically */
+  transform: translateY(-50%); /* Perfect centering adjustment */
+  
+  width: 28px;         /* Your requested size */
+  height: 28px;        /* Your requested size */
+  object-fit: contain;
+  opacity: 0.5;        /* Optional: Makes it look grey/subtle */
+  pointer-events: none; /* Allows clicking through the icon to the input */
+}
+
+/* --- INPUT FIELD --- */
+.search-input {
+  width: 100%;
+  height: 40px;        /* Fixed height for consistency */
+  
+  /* Left padding must be larger than icon width + left position 
+     (8px left + 28px width = 36px occupied). We use 44px to be safe. */
+  padding: 10px 12px 10px 44px; 
+  
+  background-color: #F3F4F6; 
+  border: none;
+  border-radius: 12px; /* Pill shape (change to 8px if you prefer rectangle) */
+  font-size: 0.9rem;
+  outline: none;
+  color: #1F2937;
+  font-family: 'Inter', sans-serif;
+}
+
+.search-input::placeholder {
+  color: #9CA3AF;
+}

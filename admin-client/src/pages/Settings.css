@@ -1,0 +1,143 @@
+/* --- TOP HEADER --- */
+.settings-top-header {
+  height: 80px;
+  width: 100%;
+  border-bottom: 1px solid #9CA3AF;
+  background-color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+/* --- CONTAINER --- */
+.settings-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #FFFFFF;
+  overflow: hidden;
+}
+
+/* --- MAIN SCROLL AREA --- */
+.settings-main-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 24px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 30px; 
+}
+
+/* --- MAIN CARD --- */
+.settings-card {
+  border: 1px solid #9CA3AF; 
+  border-radius: 12px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: 10px;
+
+  /* 👇 REDUCED THIS: This pulls the bottom border UP */
+  min-height: 480px; 
+  
+  flex-shrink: 0;
+}
+
+/* --- TABS SECTION --- */
+.settings-tabs {
+  padding: 0 24px;
+  border-bottom: 1px solid #9CA3AF; 
+  margin-top: 20px;
+}
+
+.tab-item {
+  display: inline-block;
+  padding: 10px 5px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  /* color: #6B7280; */
+  position: relative;
+  margin-right: 20px;
+  background: none;
+}
+
+.tab-item.active {
+  color: #111827;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #4B5563;
+}
+
+/* --- FORM SECTION --- */
+.settings-form-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  max-width: 625px;
+  
+  /* 👇 Space for the absolute button */
+  padding-bottom: 80px; 
+}
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6B7280;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 1px solid #9CA3AF;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #111827;
+  outline: none;
+}
+
+.form-group input:disabled {
+  background-color: #F9FAFB;
+  color: #6B7280;
+  border-color: #D1D5DB;
+}
+
+/* --- FOOTER (SAVE BUTTON POSITION) --- */
+.settings-footer {
+  position: absolute;
+  
+  /* 👇 REDUCED THIS: Pulls button closer to the bottom line */
+  bottom: 20px; 
+  
+  right: 40px; 
+  display: flex;
+}
+
+.btn-save-settings {
+  background-color: #D1D5DB;
+  color: #374151;
+  border: none;
+  padding: 12px 80px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save-settings:hover {
+  background-color: #9CA3AF;
+  color: white;
+}

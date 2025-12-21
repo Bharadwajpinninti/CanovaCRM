@@ -1,0 +1,61 @@
+/* --- SIDEBAR CONTAINER --- */
+.sidebar {
+  width: 292px; /* Fixed width */
+  background-color: #DEDEDE; /* Grey background */
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+/* --- BRAND / LOGO --- */
+.brand {
+  margin-bottom: 40px;
+}
+
+.brand-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+}
+
+.brand-highlight {
+  color: #2563EB; /* Brand Blue */
+}
+
+/* --- NAVIGATION MENU --- */
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* --- NAV ITEMS --- */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 244px;       /* Fixed button width */
+  height: 30px;       /* Fixed button height */
+  padding: 0 16px;
+  border-radius: 15px; /* Pill shape */
+  text-decoration: none;
+  color: #000;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Hover State */
+.nav-item:hover:not(.active) {
+  background-color: rgba(0,0,0,0.05);
+}
+
+/* Active State */
+.nav-item.active {
+  background-color: #A7A7A7; /* Darker grey for active tab */
+  color: white;
+}

@@ -1,0 +1,99 @@
+.pagination-container {
+  display: flex;
+  justify-content: space-between; /* Previous Left, Next Right, Numbers Center */
+  align-items: center;
+  padding: 15px 24px;
+  background-color: white;
+  
+  /* Top border creates the hairline separator seen in the image */
+  /* border-top: 1px solid #E5E7EB;  */
+  
+  /* Ensure it sits at the bottom of the card */
+  flex-shrink: 0;
+}
+
+/* --- PREV / NEXT BUTTONS --- */
+.pg-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: white;
+  border: 1px solid #D1D5DB; /* Grey Outline */
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pg-btn:hover:not(:disabled) {
+  background-color: #F9FAFB;
+  border-color: #9CA3AF;
+}
+
+.pg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #F3F4F6;
+}
+
+.arrow-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  padding-bottom: 2px; /* Visual adjustment */
+}
+
+/* --- NUMBERS --- */
+.pg-numbers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pg-num {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6B7280;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pg-num:hover {
+  background-color: #F3F4F6;
+  color: #111827;
+}
+
+/* ACTIVE PAGE STYLE (Grey Box) */
+.pg-num.active {
+  background-color: #F3F4F6; /* Light Grey Background */
+  color: #111827;            /* Dark Text */
+  font-weight: 600;
+}
+
+.pg-dots {
+  color: #9CA3AF;
+  padding: 0 4px;
+}
+
+.pg-num:focus, 
+.pg-num:active,
+.pg-btn:focus,
+.pg-btn:active {
+  outline: none;
+  border: none; 
+  box-shadow: none;
+}
+
+/* Removes the blue/grey tap highlight on mobile/touch */
+.pg-num, .pg-btn {
+  -webkit-tap-highlight-color: transparent;
+}

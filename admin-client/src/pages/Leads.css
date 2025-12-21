@@ -1,0 +1,115 @@
+/* --- LEADS CONTAINER --- */
+.leads-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #FFFFFF;
+}
+
+/* --- BUTTONS --- */
+.btn-group { display: flex; gap: 22px; }
+
+.btn-manual, .btn-csv {
+  background: #D1D5DB;
+  border: none;
+  color: #1F2937;
+  padding: 12px 40px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-manual:hover, .btn-csv:hover {
+  background: #9CA3AF;
+  color: white;
+}
+
+/* --- MAIN CARD --- */
+.leads-card {
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  background: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 24px 20px 24px;
+}
+
+/* --- GRID LAYOUT --- */
+.leads-grid {
+  display: grid;
+  grid-template-columns: 
+    40px        /* No */
+    1.2fr       /* Name */
+    2fr         /* Email */
+    0.8fr       /* Source */
+    1fr         /* Date */
+    1fr         /* Location */
+    0.8fr       /* Lang */
+    1.5fr       /* Assigned To */
+    0.8fr       /* Status */
+    0.6fr       /* Type */
+    1fr;        /* Scheduled Date */
+  gap: 10px;
+  align-items: center;
+}
+
+/* --- HEADER --- */
+.leads-table-header {
+  padding: 15px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4B5563;
+  
+  /* 👇 1. THIS ADDS THE HORIZONTAL LINE BELOW HEADING */
+  border-bottom: 2px solid #D1D5DB; 
+  
+  margin-bottom: 20px;
+  flex-shrink: 0;
+  
+  /* 👇 2. PREVENTS HEADER TEXT FROM WRAPPING (Fixes "Scheduled Date") */
+  white-space: nowrap; 
+}
+
+/* --- BODY (SCROLLBAR REMOVED) --- */
+.leads-table-body {
+  flex: 1;
+  /* 1. REMOVED SCROLLBAR HERE */
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Slightly tighter gap */
+}
+
+/* --- ROW CARDS (HEIGHT DECREASED + BG) --- */
+.leads-row {
+  border: 1px solid #9CA3AF; 
+  border-radius: 8px;
+  
+  /* 2. DECREASED HEIGHT (Padding reduced) */
+  padding: 10px 12px; 
+
+  background-color: #F9FAFB; 
+  
+  /* 👇 TEXT COLOR (Must be dark since background is light) */
+  color: #111827;
+  
+  font-size: 0.85rem;
+  color: #111827;
+  font-weight: 500;
+  transition: background 0.1s;
+}
+
+.leads-row:hover {
+  background: #F3F4F6;
+}
+
+/* --- PAGINATION WRAPPER --- */
+.pagination-wrapper {
+  margin-top: auto;
+  padding-top: 15px;
+}
