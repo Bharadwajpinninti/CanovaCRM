@@ -63,7 +63,7 @@ const AddLeadCSV = ({ isOpen, onClose }) => {
                         <span className="sample-text">{fileName}</span>
                         <button className="btn-download-sample">
                             <img src={downloadIcon} alt="Download" className="download-icon-img" />
-                        </button>
+                        </button> 
                     </div>
                 </div>
 
