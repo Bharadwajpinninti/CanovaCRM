@@ -1,4 +1,4 @@
-/* --- CONTAINER & GLOBAL LAYOUT --- */
+--- CONTAINER & GLOBAL LAYOUT ---
 .emp-container {
   flex: 1;
   display: flex;
@@ -299,4 +299,325 @@
   background: #F3F4F6;
   color: #111827;
   font-weight: 700;
+}
+
+
+
+/* --- CONTAINER & GLOBAL LAYOUT --- */
+.emp-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #FFFFFF;
+}
+
+.page-content {
+  padding: 10px 40px 20px 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.page-header {
+  display: flex;
+  height: 30px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.btn-add {
+  background: #D1D5DB;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #111827;
+}
+
+/* --- TABLE CARD --- */
+.emp-card {
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  background: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.emp-table-header,
+.emp-row {
+  display: grid;
+  grid-template-columns: 50px 2.5fr 1.5fr 1fr 1fr 1fr 50px;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.emp-table-header {
+  height: 50px;
+  border-bottom: 1px solid #E5E7EB;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.emp-table-body {
+  flex: 1;
+  overflow-y: auto;
+  /* Ensure dropdowns can flow over if needed, or handle with portal */
+}
+
+.emp-row {
+  height: 72px;
+  border-bottom: 1px solid #F9FAFB;
+  font-size: 0.9rem;
+  color: #374151;
+  position: relative; /* Needed for dropdown positioning */
+}
+
+.emp-row.selected {
+  background: #F3F4F6;
+}
+
+/* --- PROFILE DESIGN --- */
+.center-align {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.u-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.u-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #FCEEE9;
+  color: #943634;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.u-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.u-name {
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.u-email {
+  font-size: 0.8rem;
+  color: #6B7280;
+  line-height: 1.2;
+}
+
+.badge-id {
+  background: #F3F4F6;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+/* Status Pills */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.active {
+  background: #ECFDF5;
+  color: #047857;
+}
+
+.inactive {
+  background: #FEF2F2;
+  color: #B91C1C;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* --- DROPDOWN MENU (MATCHING SCREENSHOT) --- */
+.td-menu {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 1.2rem;
+  color: #9CA3AF;
+}
+
+.menu-dropdown {
+  position: absolute;
+  right: 10px; /* Aligns slightly to the left of the dots */
+  top: 30px;   /* Pushes it below the dots */
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  width: 140px;
+  z-index: 50;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  color: #374151;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: #F3F4F6;
+}
+
+.menu-item img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+}
+
+/* --- MODAL --- */
+.modal-area-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.clean-popout-box {
+  width: 100%;
+  height: 750px;
+  max-width: 1300px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.btn-close-x {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group-stacked {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group-stacked label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+.input-group-stacked input, 
+.input-group-stacked select {
+  width: 500px; 
+  padding: 12px 12px; 
+  border: 1.5px solid #111827;
+  color: #111827;
+  border-radius: 8px;
+  font-size: 0.85rem; 
+  outline: none;
+  background: #fff;
+  font-weight: 600;
+}
+
+/* Disabled input style for Edit Mode */
+.input-group-stacked input:disabled {
+  background-color: #F3F4F6;
+  color: #9CA3AF;
+  border-color: #E5E7EB;
+  cursor: not-allowed;
+}
+
+.modal-action-footer {
+  margin-top: 40px;
+  padding-top: 50px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-large-save {
+  background-color: #D1D5DB;
+  color: #374151;
+  padding: 14px 80px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
 }

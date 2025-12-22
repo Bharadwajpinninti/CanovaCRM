@@ -1,33 +1,199 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
+// import './Settings.css';
+// import Breadcrumbs from '../components/Breadcrumbs';
+
+// const Settings = () => {
+//   const [formData, setFormData] = useState({
+//     firstName: 'Sarthak',
+//     lastName: 'Pal',
+//     email: 'Sarthakpal08@gmail.com', // Non-editable per rules
+//     password: '',
+//     confirmPassword: ''
+//   });
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const handleSave = (e) => {
+//     e.preventDefault();
+//     if (formData.password && formData.password !== formData.confirmPassword) {
+//       alert("Passwords do not match!");
+//       return;
+//     }
+//     alert("Profile Updated Successfully!");
+//   };
+
+//   return (
+//     <div className="settings-container">
+//       {/* Top horizontal line consistent with other pages */}
+//       <div className="settings-top-header"></div>
+
+//       <div className="settings-main-area">
+//         <div className="page-header">
+//           <Breadcrumbs />
+//         </div>
+
+//         <div className="settings-card">
+//           <div className="settings-tabs">
+//             <div className="tab-item active">Edit Profile</div>
+//           </div>
+
+//           <div className="settings-form-container">
+//             <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column' }}>
+              
+//               <div className="form-group">
+//                 <label>First name</label>
+//                 <input 
+//                   type="text" 
+//                   name="firstName" 
+//                   value={formData.firstName} 
+//                   onChange={handleChange} 
+//                   required 
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Last name</label>
+//                 <input 
+//                   type="text" 
+//                   name="lastName" 
+//                   value={formData.lastName} 
+//                   onChange={handleChange} 
+//                   required 
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Email</label>
+//                 <input 
+//                   type="email" 
+//                   name="email" 
+//                   value={formData.email} 
+//                   disabled 
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Password</label>
+//                 <input 
+//                   type="password" 
+//                   name="password" 
+//                   placeholder="***********"
+//                   value={formData.password} 
+//                   onChange={handleChange} 
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Confirm Password</label>
+//                 <input 
+//                   type="password" 
+//                   name="confirmPassword" 
+//                   placeholder="***********"
+//                   value={formData.confirmPassword} 
+//                   onChange={handleChange} 
+//                 />
+//               </div>
+
+//               <div className="settings-footer">
+//                 <button type="submit" className="btn-save-settings">Save</button>
+//               </div>
+//             </form>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Settings;
+
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Settings.css';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const Settings = () => {
+  // Use your .env variable or fallback to localhost
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const [formData, setFormData] = useState({
-    firstName: 'Sarthak',
-    lastName: 'Pal',
-    email: 'Sarthakpal08@gmail.com', // Non-editable per rules
+    firstName: '',
+    lastName: '',
+    email: '', 
     password: '',
     confirmPassword: ''
   });
 
+  const [loading, setLoading] = useState(true);
+
+  // 1. Fetch Current Data on Page Load
+  useEffect(() => {
+    const fetchAdminData = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/admin/settings`);
+        if (data.success) {
+          setFormData(prev => ({
+            ...prev,
+            firstName: data.admin.firstName,
+            lastName: data.admin.lastName,
+            email: data.admin.email
+          }));
+        }
+      } catch (error) {
+        console.error("Error loading settings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAdminData();
+  }, [backendUrl]);
+
+  // 2. Handle Input Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSave = (e) => {
+  // 3. Handle Save (Update)
+  const handleSave = async (e) => {
     e.preventDefault();
+
+    // Check Password Match (only if password field is not empty)
     if (formData.password && formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-    alert("Profile Updated Successfully!");
+
+    try {
+      const { data } = await axios.put(`${backendUrl}/api/admin/settings`, {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email, // Sent to identify the admin
+        password: formData.password // Only sent if user wants to change it
+      });
+
+      if (data.success) {
+        alert("Profile Updated Successfully!");
+        // Clear password fields after success
+        setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
+      } else {
+        alert("Update failed: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error updating settings:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
+
+  if (loading) return <div className="settings-container">Loading...</div>;
 
   return (
     <div className="settings-container">
-      {/* Top horizontal line consistent with other pages */}
+      {/* Top horizontal line */}
       <div className="settings-top-header"></div>
 
       <div className="settings-main-area">
@@ -72,6 +238,7 @@ const Settings = () => {
                   name="email" 
                   value={formData.email} 
                   disabled 
+                  style={{ backgroundColor: '#f9fafb', cursor: 'not-allowed', color: '#6b7280' }}
                 />
               </div>
 
@@ -80,7 +247,7 @@ const Settings = () => {
                 <input 
                   type="password" 
                   name="password" 
-                  placeholder="***********"
+                  placeholder="" 
                   value={formData.password} 
                   onChange={handleChange} 
                 />
@@ -91,7 +258,7 @@ const Settings = () => {
                 <input 
                   type="password" 
                   name="confirmPassword" 
-                  placeholder="***********"
+                  placeholder="" 
                   value={formData.confirmPassword} 
                   onChange={handleChange} 
                 />

@@ -1,102 +1,160 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 import './Employees.css';
 import Search from '../components/Searchbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Pagination from '../components/Pagination';
 
-// --- HELPER ---
+// Import Icons
+import EditIcon from '../assets/edit.png';
+import DeleteIcon from '../assets/delete.png';
+
 const getInitials = (first, last) => `${first?.charAt(0) || ''}${last?.charAt(0) || ''}`.toUpperCase();
 
-// --- MOCK DATA ---
-const generateMockData = () => {
-  const data = [];
-  const names = ["Tanner Finsha", "Emeto Winner", "Tassy Omah", "James Muriel", "Sarah Connor", "John Doe", "Alice Smith", "Bob Johnson"];
-  const statuses = ["Active", "Active", "Inactive", "Inactive", "Inactive", "Active", "Active", "Inactive"];
-  
-  for (let i = 0; i < 40; i++) {
-    const nameIndex = i % names.length;
-    const fName = names[nameIndex].split(' ')[0];
-    const lName = names[nameIndex].split(' ')[1];
-    data.push({
-      id: `emp_${i}`,
-      mongoId: `#23454GH6J${i}YT6`,
-      firstName: fName, 
-      lastName: lName,
-      email: `${fName.toLowerCase()}@canova.crm`,
-      location: "New York", 
-      language: "English",
-      assigned: Math.floor(Math.random() * 15), 
-      closed: Math.floor(Math.random() * 8),
-      status: statuses[i % statuses.length]
-    });
-  }
-  return data;
-};
-
 const Employees = () => {
-  const [employees, setEmployees] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [dropdownOpenId, setDropdownOpenId] = useState(null);
-  const [currentEmployee, setCurrentEmployee] = useState({
-    firstName: '', lastName: '', email: '', location: '', language: ''
-  });
-
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
   const ITEMS_PER_PAGE = 8;
 
-  useEffect(() => { 
-    setEmployees(generateMockData()); 
-  }, []);
+  // --- STATE ---
+  const [employees, setEmployees] = useState([]);
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Selection State
+  const [selectedIds, setSelectedIds] = useState([]); // <--- RESTORED
 
-  const filteredEmployees = employees.filter(emp => 
-    emp.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // UI State
+  const [showModal, setShowModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', location: '', language: '' });
 
+  // --- 1. FETCH & FILTER ---
+  const fetchEmployees = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/admin/employees`);
+      if (data.success) {
+        setEmployees(data.employees);
+        setFilteredEmployees(data.employees);
+      }
+    } catch (error) { console.error("Error:", error); }
+  }, [backendUrl]);
+
+  useEffect(() => { fetchEmployees(); }, [fetchEmployees]);
+
+  useEffect(() => {
+    const lowerTerm = searchTerm.toLowerCase();
+    const filtered = employees.filter(emp => 
+      emp.firstName.toLowerCase().includes(lowerTerm) ||
+      emp.lastName.toLowerCase().includes(lowerTerm) ||
+      emp.email.toLowerCase().includes(lowerTerm)
+    );
+    setFilteredEmployees(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, employees]);
+
+  // --- 2. SELECTION LOGIC ---
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentData = filteredEmployees.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const toggleSelectAll = () => {
-    selectedIds.length === currentData.length ? setSelectedIds([]) : setSelectedIds(currentData.map(e => e.id));
+    if (selectedIds.length === currentData.length) {
+      setSelectedIds([]); // Deselect all
+    } else {
+      setSelectedIds(currentData.map(e => e._id)); // Select all on current page
+    }
   };
-  
+
   const toggleRow = (id) => {
-    selectedIds.includes(id) ? setSelectedIds(selectedIds.filter(sid => sid !== id)) : setSelectedIds([...selectedIds, id]);
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(sid => sid !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
   };
 
-  const handleSave = (e) => {
+  // --- 3. MODAL HANDLERS ---
+  const openModal = (employee = null) => {
+    setIsEditMode(!!employee);
+    setFormData(employee ? { ...employee } : { firstName: '', lastName: '', email: '', location: '', language: '' });
+    setShowModal(true);
+    setDropdownOpenId(null);
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    const newEmployee = { 
-      ...currentEmployee, 
-      id: `new_${Date.now()}`, 
-      mongoId: `#${Math.random().toString(36).substring(2, 9).toUpperCase()}`, 
-      assigned: 0, closed: 0, status: 'Inactive' 
-    };
-    setEmployees([newEmployee, ...employees]);
-    setShowModal(false);
+    try {
+      const endpoint = isEditMode ? '/api/admin/edit-employee' : '/api/admin/add-employee';
+      const method = isEditMode ? axios.put : axios.post;
+      const { data } = await method(`${backendUrl}${endpoint}`, isEditMode ? { ...formData, id: formData._id } : formData);
+
+      if (data.success) {
+        alert(isEditMode ? "Updated Successfully!" : "Added Successfully!");
+        fetchEmployees();
+        setShowModal(false);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) { alert("Operation failed."); }
   };
 
-  const handleDelete = (id) => setEmployees(employees.filter(e => e.id !== id));
+  // --- 4. SMART DELETE (Single or Bulk) ---
+  const handleDelete = async (targetId) => {
+    // Logic: If the row we clicked is part of the selection, delete ALL selected.
+    // If not, just delete the specific row we clicked.
+    const isBulkDelete = selectedIds.includes(targetId) && selectedIds.length > 1;
+    const idsToDelete = isBulkDelete ? selectedIds : [targetId];
+
+    const message = isBulkDelete 
+      ? `Delete ${idsToDelete.length} selected employees?` 
+      : "Delete this employee?";
+
+    if (!window.confirm(message)) return;
+
+    try {
+      // We send 'ids' for bulk, or 'id' for single (though 'ids' works for both now)
+      const payload = isBulkDelete ? { ids: idsToDelete } : { id: targetId };
+      
+      const { data } = await axios.delete(`${backendUrl}/api/admin/delete-employee`, { data: payload });
+      
+      if (data.success) {
+        setSelectedIds([]); // Clear selection
+        fetchEmployees();
+      } else {
+        alert(data.message);
+      }
+    } catch (error) { console.error(error); }
+    setDropdownOpenId(null);
+  };
+
+  // --- CLOSE DROPDOWN ON OUTSIDE CLICK ---
+  useEffect(() => {
+    const closeMenu = (e) => { if (dropdownOpenId && !e.target.closest('.td-menu')) setDropdownOpenId(null); };
+    document.addEventListener('mousedown', closeMenu);
+    return () => document.removeEventListener('mousedown', closeMenu);
+  }, [dropdownOpenId]);
 
   return (
     <div className="emp-container">
-      <Search value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
+      <Search value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
 
       <div className="page-content">
         <div className="page-header">
           <Breadcrumbs />
-          <div className="btn-group">
-            {selectedIds.length > 0 && <button className="btn-delete-bulk">Delete ({selectedIds.length})</button>}
-            <button className="btn-add" onClick={() => setShowModal(true)}>Add Employees</button>
-          </div>
+          <button className="btn-add" onClick={() => openModal()}>Add Employees</button>
         </div>
 
         <div className="emp-card">
           <div className="emp-table-header">
-            <div className="th-check"><input type="checkbox" onChange={toggleSelectAll} checked={currentData.length > 0 && selectedIds.length === currentData.length} /></div>
+            <div className="th-check">
+              {/* Select All Checkbox */}
+              <input 
+                type="checkbox" 
+                checked={currentData.length > 0 && selectedIds.length === currentData.length}
+                onChange={toggleSelectAll} 
+              />
+            </div>
             <div className="th col-name">Name</div>
             <div className="th col-id center-align">Employee ID</div>
             <div className="th col-leads center-align">Assigned Leads</div>
@@ -107,8 +165,15 @@ const Employees = () => {
 
           <div className="emp-table-body">
             {currentData.map(emp => (
-              <div key={emp.id} className={`emp-row ${selectedIds.includes(emp.id) ? 'selected' : ''}`}>
-                <div className="td-check"><input type="checkbox" checked={selectedIds.includes(emp.id)} onChange={() => toggleRow(emp.id)} /></div>
+              <div key={emp._id} className={`emp-row ${selectedIds.includes(emp._id) ? 'selected' : ''}`}>
+                <div className="td-check">
+                  {/* Row Checkbox */}
+                  <input 
+                    type="checkbox" 
+                    checked={selectedIds.includes(emp._id)}
+                    onChange={() => toggleRow(emp._id)}
+                  />
+                </div>
                 <div className="td col-name">
                   <div className="u-wrapper">
                     <div className="u-avatar">{getInitials(emp.firstName, emp.lastName)}</div>
@@ -118,16 +183,24 @@ const Employees = () => {
                     </div>
                   </div>
                 </div>
-                <div className="td col-id center-align"><span className="badge-id">{emp.mongoId}</span></div>
+                <div className="td col-id center-align"><span className="badge-id">{emp.employeeId}</span></div>
                 <div className="td col-leads center-align">{emp.assigned}</div>
                 <div className="td col-leads center-align">{emp.closed}</div>
-                <div className="td col-status center-align"><span className={`pill ${emp.status.toLowerCase()}`}><span className="dot"></span> {emp.status}</span></div>
+                <div className="td col-status center-align">
+                  <span className={`pill ${emp.status ? emp.status.toLowerCase() : 'active'}`}><span className="dot"></span> {emp.status}</span>
+                </div>
                 <div className="td-menu">
-                  <button className="icon-btn" onClick={() => setDropdownOpenId(dropdownOpenId === emp.id ? null : emp.id)}>⋮</button>
-                  {dropdownOpenId === emp.id && (
+                  <button className="icon-btn" onClick={() => setDropdownOpenId(dropdownOpenId === emp._id ? null : emp._id)}>⋮</button>
+                  {dropdownOpenId === emp._id && (
                     <div className="menu-dropdown">
-                      <div className="menu-item" onClick={() => setDropdownOpenId(null)}>Edit</div>
-                      <div className="menu-item delete" onClick={() => { handleDelete(emp.id); setDropdownOpenId(null); }}>Delete</div>
+                      <div className="menu-item" onClick={() => openModal(emp)}>
+                        <img src={EditIcon} alt="Edit" /> Edit
+                      </div>
+                      
+                      {/* Delete logic handles both Single and Bulk */}
+                      <div className="menu-item" onClick={() => handleDelete(emp._id)}>
+                        <img src={DeleteIcon} alt="Delete" /> Delete
+                      </div>
                     </div>
                   )}
                 </div>
@@ -135,61 +208,39 @@ const Employees = () => {
             ))}
           </div>
 
-          <Pagination 
-            currentPage={currentPage}
-            totalItems={filteredEmployees.length}
-            itemsPerPage={ITEMS_PER_PAGE}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
+          <Pagination currentPage={currentPage} totalItems={filteredEmployees.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />
         </div>
 
-        {/* CLEAN AREA MODAL POPUP */}
         {showModal && (
           <div className="modal-area-overlay">
             <div className="clean-popout-box">
               <div className="modal-top">
-                <h3 className="modal-title">Add New Employee</h3>
+                <h3 className="modal-title">{isEditMode ? "Edit Employee" : "Add New Employee"}</h3>
                 <button className="btn-close-x" onClick={() => setShowModal(false)}>✕</button>
               </div>
-
               <form onSubmit={handleSave} className="form-stack">
                 <div className="input-group-stacked">
                   <label>First name</label>
-                  <input placeholder="Sarthak" required value={currentEmployee.firstName} 
-                    onChange={e => setCurrentEmployee({...currentEmployee, firstName: e.target.value})} />
+                  <input required value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} />
                 </div>
                 <div className="input-group-stacked">
                   <label>Last name</label>
-                  <input placeholder="Pal" required value={currentEmployee.lastName} 
-                    onChange={e => setCurrentEmployee({...currentEmployee, lastName: e.target.value})} />
+                  <input required value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} />
                 </div>
                 <div className="input-group-stacked">
-                  <label>Email</label>
-                  <input type="email" placeholder="Sarthakpal08@gmail.com" required value={currentEmployee.email} 
-                    onChange={e => setCurrentEmployee({...currentEmployee, email: e.target.value})} />
+                  <label>Email {isEditMode && <small>(Not Editable)</small>}</label>
+                  <input type="email" required value={formData.email} disabled={isEditMode} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                 </div>
                 <div className="input-group-stacked">
                   <label>Location</label>
-                  <select required value={currentEmployee.location} 
-                    onChange={e => setCurrentEmployee({...currentEmployee, location: e.target.value})}>
-                    <option value="" disabled>Select Location</option>
-                    <option value="Karnataka">Karnataka</option>
-                    <option value="Maharashtra">Maharashtra</option>
-                  </select>
+                  <input required value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
                 </div>
                 <div className="input-group-stacked">
-                  <label>Preferred Language</label>
-                  <select required value={currentEmployee.language} 
-                    onChange={e => setCurrentEmployee({...currentEmployee, language: e.target.value})}>
-                    <option value="" disabled>Select Language</option>
-                    <option value="Tamil">Tamil</option>
-                    <option value="English">English</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="Marathi">Marathi</option>
-                  </select>
+                  <label>Preferred Language {isEditMode && <small>(Not Editable)</small>}</label>
+                  <input required value={formData.language} disabled={isEditMode} onChange={e => setFormData({ ...formData, language: e.target.value })} />
                 </div>
                 <div className="modal-action-footer">
-                  <button type="submit" className="btn-large-save">Save</button>
+                  <button type="submit" className="btn-large-save">{isEditMode ? "Update" : "Save"}</button>
                 </div>
               </form>
             </div>

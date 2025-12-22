@@ -1,18 +1,24 @@
 import mongoose from 'mongoose';
 
 const EmployeeSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  // 1. Updated to match Frontend Form
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  
+  // 2. Added Employee ID (Generated in Controller)
+  employeeId: { type: String, required: true, unique: true },
+
   email: { type: String, required: true, unique: true }, 
   role: { type: String, default: 'Sales' },
   
   status: { 
     type: String, 
     enum: ['Active', 'Inactive'], 
-    default: 'Inactive' 
+    default: 'Active' // Changed default to Active so they show up as working immediately
   },
   
-  location: { type: String, required: true },
-  language: { type: String, required: true }, 
+  location: { type: String, default: "New York" },
+  language: { type: String, default: "English" }, 
   
   // Logic: 3 leads per cycle
   currentLeadCount: { type: Number, default: 0 }, 
@@ -21,8 +27,8 @@ const EmployeeSchema = new mongoose.Schema({
   dailyBreakTaken: { type: Boolean, default: false },
   
   // Stats
-  totalAssignedLeads: { type: Number, default: 0 },
-  totalClosedLeads: { type: Number, default: 0 },
+  assigned: { type: Number, default: 0 }, // Renamed from totalAssignedLeads to match Frontend map
+  closed: { type: Number, default: 0 },   // Renamed from totalClosedLeads to match Frontend map
 
   attendanceLogs: [{
     date: { type: Date, default: Date.now },

@@ -1,38 +1,46 @@
+// import mongoose from 'mongoose';
+
+// const leadSchema = new mongoose.Schema({
+//   name: { type: String, required: true },
+//   email: { type: String, required: true },
+//   source: { type: String, required: true },
+//   date: { type: String, required: true }, // Or Date type if you prefer
+//   location: { type: String, required: true },
+//   language: { type: String, required: true },
+  
+//   // System Fields
+//   status: { type: String, default: "ongoing" }, // ongoing, closed
+//   type: { type: String, default: "-" },
+//   scheduleDate: { type: String, default: "-" },
+//   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', default: null }
+// }, { timestamps: true });
+
+// const Lead = mongoose.model('Lead', leadSchema);
+// export default Lead;
+
 import mongoose from 'mongoose';
 
-const LeadSchema = new mongoose.Schema({
+const leadSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  source: { type: String },
-  date: { type: Date, default: Date.now }, 
-  location: { type: String },
-  language: { type: String, required: true }, 
+  source: { type: String, required: true },
+  date: { type: String, required: true }, 
+  location: { type: String, required: true },
+  language: { type: String, required: true },
   
+  // System Fields
+  status: { type: String, default: "ongoing" },
+  type: { type: String, default: "-" },
+  scheduleDate: { type: String, default: "-" },
+
+  // 👇 THIS IS THE CRITICAL LINE FOR POPULATE TO WORK 👇
   assignedTo: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Employee', 
+    ref: 'Employee', // This must match the model name in Employee.js
     default: null 
-  },
-  
-  status: { 
-    type: String, 
-    enum: ['Ongoing', 'Closed'], 
-    default: 'Ongoing' 
-  },
-  
-  type: { 
-    type: String, 
-    enum: ['Hot', 'Warm', 'Cold'], 
-    default: 'Hot' 
-  },
-  
-  scheduledDate: { type: Date, default: null },
+  }
 
 }, { timestamps: true });
 
-LeadSchema.index({ language: 1, assignedTo: 1, status: 1 });
-
-// Check if model exists before compiling
-const Lead = mongoose.models.Lead || mongoose.model('Lead', LeadSchema);
-
+const Lead = mongoose.model('Lead', leadSchema);
 export default Lead;
