@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {Toaster} from 'react-hot-toast'
 
 // Import your components
 import Layout from './pages/Layout';
@@ -11,10 +12,15 @@ import Settings from './pages/Settings';
 function App() {
   return (
     <BrowserRouter>
+    <Toaster 
+        position="top-center" 
+        reverseOrder={false} 
+      />
       <Routes>
         {/* PARENT ROUTE: 
            This renders the <Layout /> (Sidebar) permanently. 
         */}
+        
         <Route path="/" element={<Layout />}>
           
           {/* CHILD ROUTES: 

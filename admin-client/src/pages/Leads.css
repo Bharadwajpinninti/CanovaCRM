@@ -91,7 +91,7 @@
   border-radius: 8px;
   
   /* 2. DECREASED HEIGHT (Padding reduced) */
-  padding: 10px 12px; 
+  padding: 6px 12px; 
 
   background-color: #F9FAFB; 
   
@@ -112,4 +112,9 @@
 .pagination-wrapper {
   margin-top: auto;
   padding-top: 15px;
+}
+
+/* Capitalize ONLY the Language column (7th item) */
+.leads-row div:nth-child(7) {
+    text-transform: capitalize;
 }

@@ -192,13 +192,13 @@ import AddLeadManual from '../components/AddLeadManual';
 import AddLeadCSV from '../components/AddLeadCSV'; 
 
 // --- HELPER: Format Date to DD-MM-YYYY ---
-const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    // Assuming backend sends YYYY-MM-DD (from input type="date")
-    const [year, month, day] = dateString.split('-');
-    if (!year || !month || !day) return dateString; // Fallback
-    return `${day}-${month}-${year}`;
-};
+// const formatDate = (dateString) => {
+//     if (!dateString) return "-";
+//     // Assuming backend sends YYYY-MM-DD (from input type="date")
+//     const [year, month, day] = dateString.split('-');
+//     if (!year || !month || !day) return dateString; // Fallback
+//     return `${day}-${month}-${year}`;
+// };
 
 const Leads = () => {
     const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
@@ -287,7 +287,7 @@ const Leads = () => {
                                     <div>{lead.source}</div>
                                     
                                     {/* 1. DATE FORMAT FIX (DD-MM-YYYY) */}
-                                    <div>{formatDate(lead.date)}</div>
+                                    <div>{lead.date}</div>
                                     
                                     <div>{lead.location}</div>
                                     <div>{lead.language}</div>

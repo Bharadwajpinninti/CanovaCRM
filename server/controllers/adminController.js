@@ -51,28 +51,31 @@ const updateAdminSettings = async (req, res) => {
     }
 };
 
-// 3. POST: Add Employee
- const addEmployee = async (req, res) => {
+
+const addEmployee = async (req, res) => {
     try {
         const { firstName, lastName, email, location, language } = req.body;
 
-        // 1. Check if email exists
-        const existingEmployee = await Employee.findOne({ email });
+        // 1. SANITIZE INPUTS (Lowercase for consistency)
+        const cleanEmail = email.toLowerCase();
+        const cleanLanguage = language.toLowerCase(); // <--- FIX: Store as "english"
+        
+        // 2. Check if email exists
+        const existingEmployee = await Employee.findOne({ email: cleanEmail });
         if (existingEmployee) {
             return res.json({ success: false, message: "Employee with this email already exists." });
         }
 
-        // 2. Create the Employee Object (Mongoose creates _id automatically)
+        // 3. Create the Employee Object
         const newEmployee = new Employee({
             firstName,
             lastName,
-            email,
+            email: cleanEmail,
             location,
-            language
-            // We don't set employeeId here yet...
+            language: cleanLanguage // Storing "english"
         });
 
-        // 3. Set employeeId to be the same as the unique MongoDB _id
+        // 4. Set employeeId
         newEmployee.employeeId = newEmployee._id; 
 
         await newEmployee.save();

@@ -4,6 +4,7 @@ import './Employees.css';
 import Search from '../components/Searchbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Pagination from '../components/Pagination';
+import toast from 'react-hot-toast';
 
 // Import Icons
 import EditIcon from '../assets/edit.png';
@@ -90,11 +91,11 @@ const Employees = () => {
       const { data } = await method(`${backendUrl}${endpoint}`, isEditMode ? { ...formData, id: formData._id } : formData);
 
       if (data.success) {
-        alert(isEditMode ? "Updated Successfully!" : "Added Successfully!");
+        toast.success(isEditMode ? "Employee Updated Successfully!" : "Employee Added Successfully!");
         fetchEmployees();
         setShowModal(false);
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) { alert("Operation failed."); }
   };
@@ -119,10 +120,11 @@ const Employees = () => {
       const { data } = await axios.delete(`${backendUrl}/api/admin/delete-employee`, { data: payload });
       
       if (data.success) {
+        toast.success("Employee Deleted Successfully!");
         setSelectedIds([]); // Clear selection
         fetchEmployees();
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) { console.error(error); }
     setDropdownOpenId(null);

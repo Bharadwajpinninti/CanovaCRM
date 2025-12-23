@@ -1,133 +1,129 @@
-/* Container same as manual to keep transparency */
-.modal-area-overlay {
-    position: absolute;
+/* --- MODAL OVERLAY --- */
+.modal-overlay {
+    position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: transparent; 
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: center;
-    align-items: center; /* Center horizontally and vertically */
-}
-
-.csv-upload-box {
-    width: 580px; /* Exact breadth from image */
-    background: #FFFFFF;
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.csv-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-.csv-title { font-size: 1.1rem; font-weight: 700; color: #111827; margin: 0; }
-.csv-subtitle { font-size: 0.85rem; color: #6B7280; margin-top: 4px; }
-
-/* Drag and Drop Zone */
-.drop-zone {
-    border: 1.5px dashed #9CA3AF;
-    border-radius: 8px;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
+    z-index: 1000;
 }
 
-.upload-main-img {
-    /* CHANGE: Decrease this value to make the folder icon smaller (e.g., from 50px to 30px) */
-    width: 32px; 
-    
-    /* KEEP: This ensures the icon stays proportional */
-    height: auto; 
-    
-    /* KEEP: Adds space below the image as per the design */
-    margin-bottom: 15px; 
-    
-    /* OPTIONAL: Ensures the image looks sharp */
-    object-fit: contain; 
-}
-
-.drop-text { font-size: 0.9rem; font-weight: 500; color: #374151; margin-bottom: 15px; }
-
-.or-divider { display: flex; align-items: center; width: 60%; margin-bottom: 15px; }
-.line { flex: 1; height: 1px; background: #E5E7EB; }
-.or-text { padding: 0 10px; font-size: 0.75rem; color: #9CA3AF; }
-
-.btn-browse {
+/* --- WHITE BOX --- */
+.modal-box {
     background: white;
-    border: 1px solid #111827;
-    padding: 8px 20px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 20px;
+    width: 550px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    font-family: 'Inter', sans-serif;
 }
 
-/* Sample File Section */
-.sample-file-container {
-    width: 100%;
-    background: #F9FAFB;
-    border: 1px solid #E5E7EB;
-    border-radius: 6px;
-    padding: 10px 15px;
+/* --- HEADER --- */
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+.modal-header h3 { margin: 0; font-size: 20px; font-weight: 700; color: #111; }
+.close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #666; }
+.modal-subtitle { color: #888; font-size: 14px; margin-bottom: 25px; margin-top: 5px; }
 
-.sample-text { font-size: 0.85rem; color: #6B7280; }
-.btn-download-sample { background: none; border: none; cursor: pointer; }
-.download-icon-img { width: 18px; }
-
-/* Footer Buttons */
-.csv-footer {
-    margin-top: 25px;
+/* --- DASHED UPLOAD AREA --- */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    height: 250px; /* Fixed height for consistency */
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-}
-
-.btn-csv-cancel {
-    background: white;
-    border: 1px solid #D1D5DB;
-    padding: 10px 25px;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #374151;
-    cursor: pointer;
-}
-
-.btn-csv-next {
-    background: #111827; /* Dark black background */
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
+    background: #ffffff;
+    position: relative;
+    padding: 20px;
+}
+
+/* --- STATE 1: UPLOAD UI --- */
+.drop-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.upload-icon-img { width: 48px; height: 48px; margin-bottom: 15px; opacity: 0.8; }
+.drag-text { font-size: 16px; color: #111; font-weight: 500; margin-bottom: 10px; }
+.or-divider {
+    font-size: 12px; color: #999; margin: 10px 0; display: flex; align-items: center; width: 200px;
+}
+.or-divider::before, .or-divider::after {
+    content: ""; flex: 1; height: 1px; background: #eee; margin: 0 10px;
+}
+.browse-btn {
+    padding: 8px 20px; border: 1px solid #111; background: white;
+    border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; margin-bottom: 25px;
+}
+
+/* SAMPLE FILE ROW */
+.sample-file-row {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 90%; padding: 10px 15px; border: 1px solid #eee;
+    border-radius: 6px; background: #f9f9f9;
+}
+.sample-text { color: #666; font-size: 14px; }
+
+/* --- STATE 2: VERIFYING UI --- */
+.processing-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* SPINNER RING */
+.spinner-ring {
+    width: 60px; height: 60px; border-radius: 50%;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 15px;
+    /* CSS Conic Gradient handles the black progress arc */
+}
+.spinner-center {
+    width: 50px; height: 50px; background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px; color: #111;
+}
+
+.verifying-text {
+    font-size: 16px; font-weight: 500; color: #111; margin-bottom: 10px;
+}
+
+/* Small Cancel button inside the box */
+.inner-cancel-btn {
+    padding: 6px 18px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #666;
     cursor: pointer;
 }
+.inner-cancel-btn:hover { background: #f5f5f5; }
 
-
-.btn-next-img {
-    /* CHANGE: Decrease this value to make the arrow smaller (e.g., 12px to 14px) */
-    width: 18px; 
-    
-    height: auto;
-    
-    /* Ensures the arrow sits on the same line as the text */
-    display: inline-block;
-    vertical-align: middle;
-    
-    /* Adds a small gap after the word 'Next' */
-    margin-left: 6px; 
-    
-    /* If your image has a white background, make it look clean */
-    object-fit: contain;
+/* --- FOOTER BUTTONS --- */
+.modal-footer {
+    display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px;
 }
-.arrow-right { font-size: 1rem; }
+.btn-footer-cancel {
+    padding: 10px 24px; border: 1px solid #ddd; background: white;
+    border-radius: 8px; font-weight: 500; cursor: pointer;
+}
+.btn-footer-action {
+    padding: 10px 24px; background: #0f172a; color: white;
+    border: none; border-radius: 8px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+}
+.btn-footer-action:disabled {
+    opacity: 0.5; cursor: not-allowed;
+}
