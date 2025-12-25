@@ -17,13 +17,14 @@ const Employees = () => {
   const ITEMS_PER_PAGE = 8;
 
   // --- STATE ---
+  const [loading, setLoading] = useState(true); // 1. Loading State
   const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   
   // Selection State
-  const [selectedIds, setSelectedIds] = useState([]); // <--- RESTORED
+  const [selectedIds, setSelectedIds] = useState([]);
 
   // UI State
   const [showModal, setShowModal] = useState(false);
@@ -34,12 +35,20 @@ const Employees = () => {
   // --- 1. FETCH & FILTER ---
   const fetchEmployees = useCallback(async () => {
     try {
+      // Ensure spinner shows if re-fetching (optional)
+      // setLoading(true); 
       const { data } = await axios.get(`${backendUrl}/api/admin/employees`);
       if (data.success) {
         setEmployees(data.employees);
         setFilteredEmployees(data.employees);
       }
-    } catch (error) { console.error("Error:", error); }
+    } catch (error) { 
+        console.error("Error:", error); 
+        toast.error("Failed to load employees");
+    } finally {
+        // 2. IMPORTANT: Stop the spinner when done
+        setLoading(false);
+    }
   }, [backendUrl]);
 
   useEffect(() => { fetchEmployees(); }, [fetchEmployees]);
@@ -47,9 +56,9 @@ const Employees = () => {
   useEffect(() => {
     const lowerTerm = searchTerm.toLowerCase();
     const filtered = employees.filter(emp => 
-      emp.firstName.toLowerCase().includes(lowerTerm) ||
-      emp.lastName.toLowerCase().includes(lowerTerm) ||
-      emp.email.toLowerCase().includes(lowerTerm)
+      (emp.firstName || "").toLowerCase().includes(lowerTerm) ||
+      (emp.lastName || "").toLowerCase().includes(lowerTerm) ||
+      (emp.email || "").toLowerCase().includes(lowerTerm)
     );
     setFilteredEmployees(filtered);
     setCurrentPage(1);
@@ -61,9 +70,9 @@ const Employees = () => {
 
   const toggleSelectAll = () => {
     if (selectedIds.length === currentData.length) {
-      setSelectedIds([]); // Deselect all
+      setSelectedIds([]); 
     } else {
-      setSelectedIds(currentData.map(e => e._id)); // Select all on current page
+      setSelectedIds(currentData.map(e => e._id)); 
     }
   };
 
@@ -100,10 +109,7 @@ const Employees = () => {
     } catch (error) { alert("Operation failed."); }
   };
 
-  // --- 4. SMART DELETE (Single or Bulk) ---
   const handleDelete = async (targetId) => {
-    // Logic: If the row we clicked is part of the selection, delete ALL selected.
-    // If not, just delete the specific row we clicked.
     const isBulkDelete = selectedIds.includes(targetId) && selectedIds.length > 1;
     const idsToDelete = isBulkDelete ? selectedIds : [targetId];
 
@@ -114,14 +120,12 @@ const Employees = () => {
     if (!window.confirm(message)) return;
 
     try {
-      // We send 'ids' for bulk, or 'id' for single (though 'ids' works for both now)
       const payload = isBulkDelete ? { ids: idsToDelete } : { id: targetId };
-      
       const { data } = await axios.delete(`${backendUrl}/api/admin/delete-employee`, { data: payload });
       
       if (data.success) {
         toast.success("Employee Deleted Successfully!");
-        setSelectedIds([]); // Clear selection
+        setSelectedIds([]); 
         fetchEmployees();
       } else {
         toast.error(data.message);
@@ -130,13 +134,26 @@ const Employees = () => {
     setDropdownOpenId(null);
   };
 
-  // --- CLOSE DROPDOWN ON OUTSIDE CLICK ---
   useEffect(() => {
     const closeMenu = (e) => { if (dropdownOpenId && !e.target.closest('.td-menu')) setDropdownOpenId(null); };
     document.addEventListener('mousedown', closeMenu);
     return () => document.removeEventListener('mousedown', closeMenu);
   }, [dropdownOpenId]);
 
+  // --- 4. SPINNER UI (The "Cool" Logic) ---
+  if (loading) {
+    return (
+      <div className="emp-container">
+        <div className="page-content">
+           <div className="loading-container">
+              <div className="spinner"></div>
+           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- 5. MAIN CONTENT ---
   return (
     <div className="emp-container">
       <Search value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
@@ -150,7 +167,6 @@ const Employees = () => {
         <div className="emp-card">
           <div className="emp-table-header">
             <div className="th-check">
-              {/* Select All Checkbox */}
               <input 
                 type="checkbox" 
                 checked={currentData.length > 0 && selectedIds.length === currentData.length}
@@ -169,7 +185,6 @@ const Employees = () => {
             {currentData.map(emp => (
               <div key={emp._id} className={`emp-row ${selectedIds.includes(emp._id) ? 'selected' : ''}`}>
                 <div className="td-check">
-                  {/* Row Checkbox */}
                   <input 
                     type="checkbox" 
                     checked={selectedIds.includes(emp._id)}
@@ -198,8 +213,6 @@ const Employees = () => {
                       <div className="menu-item" onClick={() => openModal(emp)}>
                         <img src={EditIcon} alt="Edit" /> Edit
                       </div>
-                      
-                      {/* Delete logic handles both Single and Bulk */}
                       <div className="menu-item" onClick={() => handleDelete(emp._id)}>
                         <img src={DeleteIcon} alt="Delete" /> Delete
                       </div>

@@ -1,0 +1,313 @@
+/* Container fills the space */
+.leads-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+/* Header */
+.leads-header {
+    background-color: #2563eb;
+    padding: 1.5rem 1.5rem 2rem 1.5rem;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+}
+
+.brand-highlight {
+    color: #facc15;
+}
+
+.nav-row {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    cursor: pointer;
+}
+
+.page-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+/* Search */
+.search-section {
+    padding: 1.5rem;
+    flex-shrink: 0;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.search-input {
+    width: 100%;
+    background-color: #f3f4f6;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.9rem 1rem 0.9rem 3rem;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+/* --- LIST: STATIC (No Scroll) with GAP --- */
+.leads-list {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+
+    /* Increased Gap */
+    gap: 2rem;
+
+    /* Static Page Logic */
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- CARD STYLES --- */
+.lead-card-wrapper {
+    position: relative;
+}
+
+.lead-card {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 1.2rem;
+
+    /* Increased Height */
+    min-height: 150px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.side-strip {
+    position: absolute;
+    left: 0;
+    top: 25%;
+    bottom: 25%;
+    width: 6px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.side-strip.orange {
+    background-color: #f97316;
+}
+
+.side-strip.yellow {
+    background-color: #facc15;
+}
+
+.side-strip.gray {
+    background-color: #d1d5db;
+}
+
+.side-strip.cold {
+    background-color: #06b6d4;
+}
+
+.card-info {
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.lead-name {
+    font-size: 1.1rem;
+    font-weight: 570;
+    color: #1f2937;
+    margin: 0;
+}
+
+/* Increased gap between email and date */
+.lead-email {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin: 0 0 2.4rem 0;
+    font-weight: 500;
+}
+
+.lead-date-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+/* Increased Calendar Icon */
+.icon-img-small {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.card-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-right: 0.5rem;
+}
+
+/* Increased Circle Radius */
+.status-circle {
+    width: 75px;
+    height:70px;
+    border-radius: 50%;
+    border-width: 6px;
+    border-style: solid;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-text {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #374151;
+    text-align: center;
+    line-height: 1;
+}
+
+.action-row {
+    display: flex;
+    gap: 0.8rem;
+}
+
+/* Increased Action Icons */
+.action-img {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    object-fit: contain;
+}
+
+/* --- POPUPS --- */
+/* Default Downwards */
+.popup-menu {
+    position: absolute;
+    right: 0;
+    top: 105%;
+    z-index: 50;
+    background: white;
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.15);
+    border: 1px solid #f3f4f6;
+    border-radius: 0.75rem;
+    padding: 1.2rem;
+    width: max-content;
+    min-width: 160px;
+}
+
+/* --- UPWARDS POPUP (For 3rd item) --- */
+.popup-menu.upwards {
+    top: auto;
+    bottom: 110%;
+    /* Displays above the icon */
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.popup-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #9ca3af;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    display: block;
+}
+
+.tag-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tag-btn {
+    border: none;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.6rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.tag-btn:hover {
+    opacity: 0.9;
+}
+
+.tag-btn.hot {
+    background-color: #f97316;
+}
+
+.tag-btn.warm {
+    background-color: #facc15;
+}
+
+.tag-btn.cold {
+    background-color: #06b6d4;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #9ca3af;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.input-group input,
+.status-select {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.4rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    outline: none;
+}
+
+.save-btn {
+    width: 100%;
+    background-color: #1f2937;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}

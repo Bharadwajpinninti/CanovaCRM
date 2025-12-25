@@ -89,7 +89,7 @@
   background: white;
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 16px; 
+  padding: 28px; 
   display: flex; align-items: center; gap: 16px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
@@ -195,14 +195,30 @@
   flex-shrink: 0;
 }
 
-.table-body-scroll { overflow-y: auto; flex: 1; }
-
+/* 1. Enforce specific height for rows so the math works */
+/* 1. Force every row to be exactly 70px tall */
 .table-row {
-  display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr;
-  padding: 8px 24px; 
-  border-bottom: 1px solid #F3F4F6;
-  align-items: center;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr;
+    
+    /* --- NEW FIXED HEIGHT --- */
+    height: 60px; 
+    
+    /* Remove vertical padding because 'height' handles the spacing now */
+    padding: 0 24px; 
+    
+    border-bottom: 1px solid #F3F4F6;
+    align-items: center; /* Keeps text/avatar vertically centered */
+}
+
+/* 2. Set container to fit exactly 4 rows (70px * 4 = 280px) */
+.table-body-scroll {
+    /* --- NEW FIXED CONTAINER HEIGHT --- */
+    max-height: 280px;  
+    
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-top: 1px solid #eee;
 }
 .table-row:last-child { border-bottom: none; }
 
@@ -238,3 +254,53 @@
 }
 .status-pill.active { background-color: var(--success-bg); color: var(--success-text); }
 .dot { width: 6px; height: 6px; background-color: #10B981; border-radius: 50%; }
+
+.table-body-scroll {
+    /* Critical for scrolling */
+    max-height: 300px; /* Or whatever fixed height you want */
+    overflow-y: auto;  /* Enables vertical scrollbar */
+    overflow-x: hidden;
+    
+    /* Optional visual polish */
+    border-top: 1px solid #eee;
+}
+
+/* Custom Scrollbar Styling (Optional) */
+.table-body-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.table-body-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.table-body-scroll::-webkit-scrollbar-thumb {
+    background: #ccc; 
+    border-radius: 4px;
+}
+
+/* Dashboard.css */
+
+/* Simple CSS Spinner */
+.spinner {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto; /* Horizontal Center */
+}
+
+/* Center the spinner vertically in the loading box */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  min-height: 400px; /* Ensures it takes up space */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

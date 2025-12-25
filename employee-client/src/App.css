@@ -1,0 +1,34 @@
+/* --- 1. GLOBAL RESET --- */
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  overflow: hidden; /* Stop global scroll */
+}
+
+/* --- 2. CONTAINER STYLES --- */
+.app-container {
+  width: 100vw; height: 100vh;
+  background-color: #18181b;
+  display: flex; justify-content: center; align-items: center;
+  font-family: -apple-system, sans-serif;
+}
+
+.phone-container {
+  width: 100%; max-width: 448px; height: 100%;
+  background-color: #ffffff;
+  display: flex; flex-direction: column;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+/* --- 3. Content Area --- */
+.content-area {
+  flex: 1; /* Fills space between top (if any) and footer */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Stops scroll here, delegates to children */
+  
+  /* Padding bottom ensures footer doesn't cover the last bit of content */
+  padding-bottom: 10px; 
+}

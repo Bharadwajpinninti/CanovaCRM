@@ -118,3 +118,16 @@
 .leads-row div:nth-child(7) {
     text-transform: capitalize;
 }
+/* Leads.css */
+.no-data{
+  display: flex;
+  justify-content: center; /* Horizontal Center */
+  align-items: center;     /* Vertical Center */
+  height: 300px;           /* Gives it height so it sits in the middle */
+  width: 100%;
+  
+  color: #9CA3AF;          /* Soft Grey (Not too black, not too light) */
+  font-size: 1.1rem;       /* Slightly larger than normal text */
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}

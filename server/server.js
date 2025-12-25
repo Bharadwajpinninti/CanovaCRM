@@ -6,6 +6,8 @@ import seedAdmin from './seed/adminSeed.js';
 import leadRouter from './routes/leadRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
 import employeeRouter from './routes/employeeRoutes.js';
+import dashboardRoutes from './routes/dashboard.js'
+
 
 // App Config
 const app = express();
@@ -31,6 +33,7 @@ startServer();
 app.use('/api/admin', adminRouter);
 app.use('/api/employee', employeeRouter);
 app.use('/api/leads', leadRouter);
+app.use('/api/dashboard', dashboardRoutes);
 app.get('/', (req, res) => {
     res.send('API WORKING - SALES CRM');
 });

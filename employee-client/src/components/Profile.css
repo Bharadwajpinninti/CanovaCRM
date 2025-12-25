@@ -1,0 +1,109 @@
+/* --- CONTAINER --- */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+  overflow-y: auto; /* Allows scrolling if form is long on small screens */
+}
+
+/* --- HEADER (Reused Style)- */
+.profile-header {
+  background-color: #2563eb;
+  padding: 1.5rem 1.5rem 2rem 1.5rem;
+  border-bottom-left-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+}
+.brand-highlight { color: #facc15; }
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  cursor: pointer;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* --- FORM SECTION --- */
+.profile-form {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-left: 0.2rem;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #d1d5db;/* Gray-300 */
+  border-radius: 0.75rem; /* Rounded corners matching UI */
+  font-size: 1rem;
+  font-weight: 500;
+  color: #10151c;
+  
+  background-color: white;
+  transition: border-color 0.2s;
+}
+
+.profile-input:focus {
+  border-color: #2b2e34;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+/* --- BUTTONS --- */
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.profile-btn {
+  flex: 1; /* Both buttons take equal width */
+  padding: 0.9rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-btn:active {
+  transform: scale(0.98);
+}
+
+.profile-btn.save {
+  background-color: #2563eb; /* Blue */
+}
+
+.profile-btn.logout {
+  background-color: #ef4444; /* Red */
+}

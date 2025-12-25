@@ -243,7 +243,18 @@ const Settings = () => {
     }
   };
 
-  if (loading) return <div className="settings-container">Loading...</div>;
+  if (loading) {
+        return (
+            <div className="settings-container">
+                <div className="page-content">
+                    {/* The Loading Logic */}
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
   return (
     <div className="settings-container">

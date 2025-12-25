@@ -1,0 +1,186 @@
+/* Dashboard Container: Flex Column to fill height exactly */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+  overflow: hidden; /* Prevents main page scroll */
+}
+
+/* --- Header Section --- */
+.dashboard-header {
+  background-color: #2563eb;
+  padding: 1.5rem 1.5rem 1.5rem 1.5rem; /* Restored standard padding */
+  border-bottom-left-radius: 2.5rem;
+  border-bottom-right-radius: 2.5rem;
+  color: white;
+  flex-shrink: 0; /* Header never shrinks */
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+}
+.brand-highlight { color: #facc15; }
+
+.greeting-text {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.user-name {
+  font-size: 1.75rem; 
+  font-weight: 600;
+  margin: 0;
+}
+
+/* --- Main Content --- */
+.dashboard-content {
+  padding: 1.25rem; /* Restored comfortable padding */
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* Restored nice gap between sections */
+  
+  /* CRITICAL: Allows content to fill space but not overflow parent */
+  flex: 1; 
+  min-height: 0; 
+}
+
+.section-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+/* Timings Section (Top Part - Static) */
+.section-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex-shrink: 0; /* Prevents Timings from getting squished */
+}
+
+/* Blue Card Styles */
+.blue-card {
+  background-color: #2563eb;
+  border-radius: 1rem;
+  padding: 1rem 1.2rem;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text-row {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.time-group {
+  display: flex;
+  flex-direction: column;
+}
+.time-group .label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.time-group .value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+  width: 22px;
+  height: 56px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-btn.white { background-color: #ffffff; }
+.toggle-btn.green { background-color: #22c55e; }
+.toggle-btn.red { background-color: #ef4444; }
+
+/* Break Section */
+.break-container {
+  background-color: #f3f4f6;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.header-strip {
+  padding: 0.8rem 1.2rem;
+}
+
+.break-list {
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+.col.right { text-align: right; }
+.col .th { font-size: 0.7rem; font-weight: 700; display: block; margin-bottom: 2px;}
+
+/* --- RECENT ACTIVITY (The Smart Fix) --- */
+.activity-wrapper {
+  display: flex;
+  flex-direction: column;
+  
+  /* Flex 1 makes this wrapper grow to fill whatever height is left on screen */
+  flex: 1; 
+  min-height: 0; /* Crucial for internal scrolling */
+  padding-bottom: 0.5rem;
+}
+
+.activity-box {
+  background-color: #f3f4f6;
+  border-radius: 1rem;
+  padding: 1rem;
+  
+  /* Height 100% fills the wrapper */
+  height: 100%; 
+  
+  /* Internal Scroll Only */
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.activity-box::-webkit-scrollbar {
+  width: 4px;
+}
+.activity-box::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 10px;
+}
+
+.activity-items {
+  list-style-type: disc;
+  padding-left: 1.2rem;
+  margin: 0;
+}
+
+.activity-items li {
+  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.4;
+  font-weight: 500;
+}
