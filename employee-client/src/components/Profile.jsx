@@ -5,6 +5,8 @@ import { ChevronLeft } from 'lucide-react';
 
 const Profile = ({ onBack, onLogout }) => {
   
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+  
   // --- 1. INITIALIZE STATE DIRECTLY FROM LOCAL STORAGE ---
   const [formData, setFormData] = useState(() => {
     const storedUser = localStorage.getItem("user");
@@ -38,8 +40,8 @@ const Profile = ({ onBack, onLogout }) => {
     setLoading(true);
 
     try {
-      // API Call: Update Name Only
-      const res = await axios.put(`http://localhost:5000/api/employee/update-profile/${id}`, {
+      
+      const res = await axios.put(`${backendUrl}/api/employee/update-profile/${id}`, {
         firstName: formData.firstName,
         lastName: formData.lastName
       });

@@ -10,6 +10,9 @@ import timeImg from '../assets/time.png';
 import arrowImg from '../assets/save.png';
 
 const Leads = ({ onBack }) => {
+  // ✅ FIXED: Use Environment Variable for Backend URL
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
   const [activeAction, setActiveAction] = useState({ index: null, type: null });
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +42,8 @@ const Leads = ({ onBack }) => {
       const user = JSON.parse(userStr);
       const employeeId = user.employeeId || user._id || user.id;
 
-      const res = await axios.get(`http://localhost:5000/api/leads/assigned/${employeeId}`);
+      // ✅ Updated URL
+      const res = await axios.get(`${backendUrl}/api/leads/assigned/${employeeId}`);
       setLeads(res.data);
       setLoading(false);
     } catch (error) {
@@ -102,7 +106,8 @@ const Leads = ({ onBack }) => {
       setLeads(updatedLeads);
       
       setActiveAction({ index: null, type: null });
-      await axios.put(`http://localhost:5000/api/leads/${leadId}`, { type: newType });
+      // ✅ Updated URL
+      await axios.put(`${backendUrl}/api/leads/${leadId}`, { type: newType });
     } catch (error) {
       console.error("Error updating tag:", error);
       fetchLeads();
@@ -121,7 +126,8 @@ const Leads = ({ onBack }) => {
       setLeads(updatedLeads);
 
       setActiveAction({ index: null, type: null });
-      await axios.put(`http://localhost:5000/api/leads/${leadId}`, { scheduleDate: isoString });
+      // ✅ Updated URL
+      await axios.put(`${backendUrl}/api/leads/${leadId}`, { scheduleDate: isoString });
     } catch (error) {
       console.error("Error updating date:", error);
     }
@@ -146,7 +152,8 @@ const Leads = ({ onBack }) => {
       setLeads(updatedLeads);
 
       setActiveAction({ index: null, type: null });
-      await axios.put(`http://localhost:5000/api/leads/${leadId}`, { status: tempStatus });
+      // ✅ Updated URL
+      await axios.put(`${backendUrl}/api/leads/${leadId}`, { status: tempStatus });
     } catch (error) {
       alert(error.response?.data?.message || "Error updating status");
       fetchLeads();

@@ -4,6 +4,8 @@ import './Schedule.css';
 import { Search, ChevronLeft, SlidersHorizontal, MapPin, ChevronDown } from 'lucide-react';
 
 const Schedule = ({ onBack }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
   const [scheduleData, setScheduleData] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -39,7 +41,8 @@ const Schedule = ({ onBack }) => {
       const employeeId = user.employeeId || user._id || user.id;
 
       try {
-        const res = await axios.get(`http://localhost:5000/api/leads/scheduled/${employeeId}`);
+        // ✅ Updated URL to use variable
+        const res = await axios.get(`${backendUrl}/api/leads/scheduled/${employeeId}`);
         setScheduleData(res.data);
         if(res.data.length > 0) setActiveId(res.data[0]._id);
       } catch (error) {
