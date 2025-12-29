@@ -66,20 +66,14 @@ export const addLeadManual = async (req, res) => {
     }
 };
 
-// --- UPDATE STATUS (Unchanged) ---
 export const updateLead = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body; 
-
-    console.log("--------------------------------------------------");
-    console.log(`[DEBUG] Update Request for Lead ID: ${id}`);
-    console.log(`[DEBUG] Request Body:`, updateData);
+    const updateData = req.body;
 
     // 1. Fetch the EXISTING lead first
     const lead = await Lead.findById(id);
     if (!lead) {
-      console.log(`[ERROR] Lead not found.`);
       return res.status(404).json({ message: "Lead not found" });
     }
 
@@ -88,8 +82,6 @@ export const updateLead = async (req, res) => {
       const newStatus = updateData.status.toLowerCase(); 
       const oldStatus = lead.status ? lead.status.toLowerCase() : "";
 
-      console.log(`[DEBUG] Status Change Detected: "${oldStatus}" -> "${newStatus}"`);
-
       // CASE: Switching to "Closed"
       if (newStatus === 'closed') {
 
@@ -97,17 +89,12 @@ export const updateLead = async (req, res) => {
         if (lead.scheduleDate) {
           const now = new Date();
           const scheduleTime = new Date(lead.scheduleDate);
-          
-          console.log(`[DEBUG] Time Check: Now (${now.toISOString()}) vs Schedule (${scheduleTime.toISOString()})`);
 
           if (now < scheduleTime) {
-            console.log(`[BLOCKED] Attempt to close before schedule time.`);
             return res.status(400).json({ 
               message: "Cannot close lead before the scheduled time." 
             });
           }
-        } else {
-            console.log(`[DEBUG] No schedule date found, skipping time check.`);
         }
 
         // B. EMPLOYEE COUNT: Increment 'closed' / Decrement 'assigned'
@@ -116,7 +103,6 @@ export const updateLead = async (req, res) => {
           if (lead.assignedTo) {
             const employee = await Employee.findById(lead.assignedTo);
             if (employee) {
-              console.log(`[DEBUG] Found Employee: ${employee.firstName} (Assigned: ${employee.assigned}, Closed: ${employee.closed})`);
               
               // Decrement assigned (safety check)
               if (employee.assigned > 0) employee.assigned -= 1;
@@ -125,15 +111,8 @@ export const updateLead = async (req, res) => {
               employee.closed = (employee.closed || 0) + 1;
               
               await employee.save();
-              console.log(`[SUCCESS] Updated Stats -> Assigned: ${employee.assigned}, Closed: ${employee.closed}`);
-            } else {
-              console.log(`[ERROR] Assigned Employee (ID: ${lead.assignedTo}) not found in DB.`);
             }
-          } else {
-            console.log(`[DEBUG] Lead has no assigned employee. Skipping stats update.`);
           }
-        } else {
-          console.log(`[DEBUG] Lead was ALREADY closed. Skipping employee stat update.`);
         }
       }
     }
@@ -141,9 +120,6 @@ export const updateLead = async (req, res) => {
     // 2. Perform the Final Update
     const updatedLead = await Lead.findByIdAndUpdate(id, updateData, { new: true });
     
-    console.log(`[SUCCESS] Lead updated successfully.`);
-    console.log("--------------------------------------------------");
-
     res.status(200).json(updatedLead);
 
   } catch (error) {
@@ -155,7 +131,7 @@ export const updateLead = async (req, res) => {
 // --- GET ALL LEADS (Updated) ---
 export const getAllLeads = async (req, res) => {
     try {
-        // 🟢 UPDATE: Added 'employeeId' to populate list so we can show it in the table
+       
         const leads = await Lead.find()
             .populate('assignedTo', 'firstName lastName employeeId') 
             .sort({ createdAt: -1 });
@@ -168,9 +144,8 @@ export const getAllLeads = async (req, res) => {
 };
 
 
-// ... existing imports ...
 
-// --- CSV UPLOAD CONTROLLER ---// --- CSV UPLOAD CONTROLLER (FIXED) ---
+// --- CSV UPLOAD CONTROLLER ---// 
 export const uploadLeadsCSV = async (req, res) => {
     try {
         const { csvData } = req.body;
@@ -262,39 +237,6 @@ export const getAssignedLeads = async (req, res) => {
   }
 };
 
-
-// export const updateLead = async (req, res) => {
-//   try {
-//     const { id } = req.params; // The Lead ID
-//     const updateData = req.body; // Data sent from frontend (e.g., { type: 'HOT' })
-
-//     // If updating status to 'Closed', perform the Time Check on the server side too for security
-//     if (updateData.status === 'Closed') {
-//       const lead = await Lead.findById(id);
-//       if (lead.scheduleDate) {
-//         const now = new Date();
-//         const scheduleTime = new Date(lead.scheduleDate);
-        
-//         if (now < scheduleTime) {
-//           return res.status(400).json({ 
-//             message: "Cannot close lead before the scheduled time." 
-//           });
-//         }
-//       }
-//     }
-
-//     const updatedLead = await Lead.findByIdAndUpdate(id, updateData, { new: true });
-
-//     if (!updatedLead) {
-//       return res.status(404).json({ message: "Lead not found" });
-//     }
-
-//     res.status(200).json(updatedLead);
-//   } catch (error) {
-//     console.error("Error updating lead:", error);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
 
 
 // Get leads that have a schedule date set

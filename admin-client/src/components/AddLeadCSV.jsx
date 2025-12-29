@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // 1. Import Axios
-import toast from 'react-hot-toast'; // 2. Import Toast
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import './AddLeadCSV.css';
 
-// ⚠️ Ensure you have these icons or remove the img tags
 import FolderIcon from '../assets/upload-icon.png'; 
 import DownloadIcon from '../assets/download-icon.png'; 
 
-const AddLeadCSV = ({ isOpen, onClose, onLeadAdded }) => { // Added onLeadAdded prop to refresh list
+const AddLeadCSV = ({ isOpen, onClose, onLeadAdded }) => { 
     const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
     // UI State
     const [step, setStep] = useState(1);
     const [file, setFile] = useState(null);
     const [progress, setProgress] = useState(0);
-    const [isUploading, setIsUploading] = useState(false); // New state to prevent double clicks
+    const [isUploading, setIsUploading] = useState(false); 
 
-    // Reset when modal opens/closes
     useEffect(() => {
         if (!isOpen) {
             resetModal();
@@ -30,7 +28,7 @@ const AddLeadCSV = ({ isOpen, onClose, onLeadAdded }) => { // Added onLeadAdded 
         setIsUploading(false);
     };
 
-    // 1. Handle File Selection
+     
     const handleFileChange = (e) => {
         const selected = e.target.files[0];
         if (selected && selected.type === "text/csv") {
@@ -40,14 +38,14 @@ const AddLeadCSV = ({ isOpen, onClose, onLeadAdded }) => { // Added onLeadAdded 
         }
     };
 
-    // 2. Go to "Verifying" State
+   
     const handleNext = () => {
         if (!file) return;
         setStep(2);
         simulateVerification();
     };
 
-    // 3. Simulate Spinner (0% -> 100%)
+  
     const simulateVerification = () => {
         setProgress(0);
         let current = 0;
@@ -64,14 +62,14 @@ const AddLeadCSV = ({ isOpen, onClose, onLeadAdded }) => { // Added onLeadAdded 
         }, 200);
     };
 
-    // 4. REAL UPLOAD ACTION (Connected to Backend)
+   
     const handleUploadClick = () => {
         if (!file || isUploading) return;
         
         setIsUploading(true);
         const loadingToast = toast.loading("Uploading leads...");
 
-        // A. Read the file as text
+       
         const reader = new FileReader();
         
         reader.onload = async (e) => {

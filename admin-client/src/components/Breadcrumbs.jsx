@@ -5,7 +5,7 @@ import './Breadcrumbs.css';
 const Breadcrumbs = () => {
   const location = useLocation();
   
-  // 1. Define the mapping: URL Path -> Display Name
+  
   const breadcrumbMap = {
     '/': 'Dashboard',
     '/employees': 'Employees',
@@ -24,7 +24,7 @@ const Breadcrumbs = () => {
         Home
       </Link>
 
-      {/* Separator */}
+   
       <span className="crumb-separator"> › </span>
 
       {/* 4. CURRENT PAGE (Static Text) */}

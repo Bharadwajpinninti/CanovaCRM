@@ -51,16 +51,16 @@ const updateAdminSettings = async (req, res) => {
     }
 };
 
-
+// 3.Adds the employee
 const addEmployee = async (req, res) => {
     try {
         const { firstName, lastName, email, location, language } = req.body;
 
-        // 1. SANITIZE INPUTS (Lowercase for consistency)
+       
         const cleanEmail = email.toLowerCase();
-        const cleanLanguage = language.toLowerCase(); // <--- FIX: Store as "english"
+        const cleanLanguage = language.toLowerCase(); 
         
-        // 2. Check if email exists
+       
         const existingEmployee = await Employee.findOne({ email: cleanEmail });
         if (existingEmployee) {
             return res.json({ success: false, message: "Employee with this email already exists." });
@@ -100,7 +100,7 @@ const addEmployee = async (req, res) => {
 };
 
 
-// ... existing imports
+
 
 // --- EDIT EMPLOYEE (PUT) ---
 const editEmployee = async (req, res) => {

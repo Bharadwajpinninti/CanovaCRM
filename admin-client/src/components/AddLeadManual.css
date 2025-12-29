@@ -1,4 +1,4 @@
-/* Container that sits perfectly inside .page-content */
+
 .modal-area-overlay {
     position: absolute;
     top: 0; 
@@ -6,7 +6,7 @@
     width: 100%; 
     height: 100%;
     
-    /* CHANGE: Remove the rgba(0,0,0,0.4) and set to transparent */
+   
     background-color: transparent; 
     
     z-index: 1000;
@@ -17,7 +17,7 @@
 }
 
 .add-lead-box {
-    width: 100%; /* Narrower width matching the lead modal image */
+    width: 100%;
     background: #FFFFFF;
     border-radius: 12px;
     padding: 50px 40px;
@@ -61,25 +61,22 @@
 }
 
 .modal-action-footer {
-    /* 1. MOVE UP: Reduce the top padding to pull the button closer to the fields */
+
     padding-top: 10px; 
     
     display: flex;
-    
-    /* 2. MOVE LEFT: Change from 'center' or 'flex-end' to 'flex-start' */
+
     justify-content: flex-start; 
-    
-    /* 3. Ensure it takes full width of the box */
+ 
     width: 100%; 
-    
-    /* Optional: Add left padding if you don't want it touching the very edge */
+   
     padding-left: 2px; 
 }
 
 .btn-large-save {
     background-color: #D1D5DB; 
     color: #374151; 
-    /* You can reduce horizontal padding if you want a smaller button */
+   
     padding: 12px 60px;
     border: none; 
     border-radius: 10px; 

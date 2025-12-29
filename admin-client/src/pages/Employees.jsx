@@ -39,7 +39,7 @@ const Employees = () => {
       // setLoading(true); 
       const { data } = await axios.get(`${backendUrl}/api/admin/employees`);
       if (data.success) {
-        // Reverse the array to show the newest (last added) employee first
+        
         const sortedEmployees = [...data.employees].reverse(); 
         
         setEmployees(sortedEmployees);

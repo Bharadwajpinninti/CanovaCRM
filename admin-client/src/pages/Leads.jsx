@@ -22,9 +22,7 @@ const formatDate = (dateString) => {
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
     const year = date.getFullYear();
 
-    // OPTIONAL: If you want to show time as well, uncomment the next line
-    // const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    // return `${day}-${month}-${year} at ${time}`;
+    
 
     return `${day}-${month}-${year}`;
 };

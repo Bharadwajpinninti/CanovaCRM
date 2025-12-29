@@ -5,11 +5,10 @@ export const getDashboardStats = async (req, res) => {
     try {
         const today = new Date();
         
-        // Date for "Assigned This Week" (KPI)
+       
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(today.getDate() - 7);
-        
-        // Date for "Graph" (Last 14 Days)
+      
         const fourteenDaysAgo = new Date();
         fourteenDaysAgo.setDate(today.getDate() - 14);
         fourteenDaysAgo.setHours(0, 0, 0, 0);
@@ -22,7 +21,7 @@ export const getDashboardStats = async (req, res) => {
             activeEmployeesCount,
             activeEmployeesList,
             recentLeadsRaw,
-            recentEmployeesRaw, // <--- 1. Fetch recent employees for activity feed
+            recentEmployeesRaw,
             graphLeadsRaw,
             totalAssignedCount 
         ] = await Promise.all([
@@ -53,7 +52,7 @@ export const getDashboardStats = async (req, res) => {
             const empName = lead.assignedTo ? lead.assignedTo.firstName : "Unknown";
 
             if (lead.status && lead.status.toLowerCase() === 'closed') {
-                // Requested format: "jaya closed a deal"
+                
                 message = `${empName} closed a deal`;
             } else if (lead.assignedTo) {
                 const isNew = Math.abs(new Date(lead.createdAt) - new Date(lead.updatedAt)) < 1000; 
@@ -99,7 +98,7 @@ export const getDashboardStats = async (req, res) => {
                 new Date(l.updatedAt) <= endOfDay
             );
 
-            // [FIXED FORMULA] Denominator: TOTAL leads worked on/added today
+            
             const dailyTotal = dailyLeads.length; 
             const dailyClosed = dailyLeads.filter(l => l.status && l.status.toLowerCase() === 'closed').length;
 
@@ -121,7 +120,7 @@ export const getDashboardStats = async (req, res) => {
                 totalLeads: totalLeadsCount
             },
             employees: activeEmployeesList,
-            activities: finalActivities, // Sending the merged/sorted list
+            activities: finalActivities, 
             chartData: chartData 
         });
 

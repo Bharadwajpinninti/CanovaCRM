@@ -1,4 +1,4 @@
-/* Wrapper to keep them aligned */
+
 .breadcrumb-wrapper {
   display: flex;
   align-items: center;
@@ -6,7 +6,6 @@
   font-size: 0.95rem;
 }
 
-/* "Home" Link Style */
 .crumb-link {
   text-decoration: none;
   color: #6B7280; /* Grey */
@@ -16,17 +15,17 @@
 }
 
 .crumb-link:hover {
-  color: #2563EB; /* Blue on hover */
+  color: #2563EB;
 }
 
 /* The ">" Arrow */
 .crumb-separator {
-  color: #9CA3AF; /* Light Grey */
+  color: #9CA3AF;
   margin: 0 8px;
 }
 
-/* Current Page Name */
+
 .crumb-current {
-  color: #1F2937; /* Dark Black/Grey */
+  color: #1F2937; 
   font-weight: 600;
 }

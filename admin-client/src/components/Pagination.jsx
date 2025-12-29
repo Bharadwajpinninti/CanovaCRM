@@ -4,9 +4,7 @@ import './Pagination.css';
 const Pagination = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  // If there is only 1 page (or no items), we can hide the pagination or just show disabled buttons.
-  // Based on your image, we typically show it even if disabled, or hide if empty.
-  // For now, let's render it but ensure logic holds.
+
   if (totalPages === 0) return null;
 
   const handlePrevious = () => {

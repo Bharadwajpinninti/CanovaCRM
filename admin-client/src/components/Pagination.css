@@ -1,14 +1,10 @@
 .pagination-container {
   display: flex;
-  justify-content: space-between; /* Previous Left, Next Right, Numbers Center */
+  justify-content: space-between;
   align-items: center;
   padding: 15px 24px;
   background-color: white;
   
-  /* Top border creates the hairline separator seen in the image */
-  /* border-top: 1px solid #E5E7EB;  */
-  
-  /* Ensure it sits at the bottom of the card */
   flex-shrink: 0;
 }
 
@@ -93,7 +89,7 @@
   box-shadow: none;
 }
 
-/* Removes the blue/grey tap highlight on mobile/touch */
+
 .pg-num, .pg-btn {
   -webkit-tap-highlight-color: transparent;
 }

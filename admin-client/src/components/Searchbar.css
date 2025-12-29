@@ -1,6 +1,6 @@
 /* --- HEADER --- */
 .top-header {
-  padding: 20px 40px;        /* Increased top/bottom padding slightly for more "space" */
+  padding: 20px 40px;       
   background-color: white;
   flex-shrink: 0;
   display: flex;
@@ -23,25 +23,24 @@
   top: 50%;            /* Center vertically */
   transform: translateY(-50%); /* Perfect centering adjustment */
   
-  width: 28px;         /* Your requested size */
-  height: 28px;        /* Your requested size */
+  width: 28px;        
+  height: 28px;        
   object-fit: contain;
-  opacity: 0.5;        /* Optional: Makes it look grey/subtle */
-  pointer-events: none; /* Allows clicking through the icon to the input */
+  opacity: 0.5;        
+  pointer-events: none; 
 }
 
 /* --- INPUT FIELD --- */
 .search-input {
   width: 100%;
-  height: 40px;        /* Fixed height for consistency */
+  height: 40px;       
   
-  /* Left padding must be larger than icon width + left position 
-     (8px left + 28px width = 36px occupied). We use 44px to be safe. */
+  
   padding: 10px 12px 10px 44px; 
   
   background-color: #F3F4F6; 
   border: none;
-  border-radius: 12px; /* Pill shape (change to 8px if you prefer rectangle) */
+  border-radius: 12px; 
   font-size: 0.9rem;
   outline: none;
   color: #1F2937;
