@@ -2,33 +2,71 @@
 * { box-sizing: border-box; }
 
 html, body, #root {
-  margin: 0; padding: 0; width: 100%; height: 100%;
+  margin: 0; padding: 0; width: 100%; 
+  /* FIXED: Use 100dvh for mobile browsers to ignore address bar */
+  height: 100vh; /* Fallback for old browsers */
+  height: 100dvh; /* The Magic Fix */
   overflow: hidden; /* Stop global scroll */
 }
 
 /* --- 2. CONTAINER STYLES --- */
 .app-container {
-  width: 100vw; height: 100vh;
+  width: 100vw;
+  /* FIXED: Match the root height */
+  height: 100vh;
+  height: 100dvh; 
+  
   background-color: #18181b;
-  display: flex; justify-content: center; align-items: center;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; /* Center on Laptop */
   font-family: -apple-system, sans-serif;
 }
 
 .phone-container {
-  width: 100%; max-width: 448px; height: 100%;
+  width: 100%; 
+  max-width: 448px; 
+  height: 100%;
   background-color: #ffffff;
-  display: flex; flex-direction: column;
+  display: flex; 
+  flex-direction: column;
   position: relative;
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
 }
 
 /* --- 3. Content Area --- */
 .content-area {
-  flex: 1; /* Fills space between top (if any) and footer */
+  flex: 1; 
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Stops scroll here, delegates to children */
+  overflow-y: auto; /* FIXED: Allow scrolling INSIDE the content area */
+  overflow-x: hidden;
   
   /* Padding bottom ensures footer doesn't cover the last bit of content */
-  padding-bottom: 10px; 
+  padding-bottom: 80px; 
+}
+
+/* ==============================================
+   🚀 MOBILE SPECIFIC FIXES (The Critical Part) 
+   ============================================== */
+@media screen and (max-width: 768px) {
+  
+  .app-container {
+    /* FIXED: On mobile, start at the TOP, don't try to center vertically */
+    align-items: flex-start !important; 
+    
+    /* Remove the dark grey background on mobile */
+    background-color: #ffffff !important; 
+  }
+
+  .phone-container {
+    max-width: 100% !important;
+    height: 100% !important;
+    box-shadow: none !important;
+  }
+  
+  /* Safe Area fix for iPhones (X, 11, 12, 13, 14, 15) */
+  .content-area {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
 }
