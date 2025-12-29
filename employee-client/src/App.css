@@ -1,26 +1,27 @@
-/* --- 1. GLOBAL RESET --- */
+/* --- App.css --- */
+
+/* 1. RESET & BASICS */
 * { box-sizing: border-box; }
 
 html, body, #root {
   margin: 0; padding: 0; width: 100%; 
-  /* Mobile Viewport Fix */
-  height: 100vh; 
-  height: 100dvh; 
-  overflow: hidden; /* Stop global body scroll */
+  height: 100%; 
+  height: 100dvh; /* Mobile Viewport Fix */
+  overflow: hidden; /* Stop the whole page from bouncing */
 }
 
-/* --- 2. CONTAINER STYLES --- */
+/* 2. MAIN WRAPPER */
 .app-container {
   width: 100vw;
-  height: 100vh;
   height: 100dvh; 
-  background-color: #18181b;
+  background-color: #f5f5f5; /* Light grey instead of white to hide gaps */
   display: flex; 
   justify-content: center; 
-  align-items: center;
+  align-items: flex-start; /* Start at top */
   font-family: -apple-system, sans-serif;
 }
 
+/* 3. PHONE FRAME (The White Box) */
 .phone-container {
   width: 100%; 
   max-width: 448px; 
@@ -29,44 +30,37 @@ html, body, #root {
   display: flex; 
   flex-direction: column;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+  box-shadow: none;
 }
 
-/* --- 3. Content Area (FIXED SCROLLING) --- */
+/* 4. CONTENT AREA (The Scrolling Part) */
 .content-area {
-  flex: 1; 
+  flex: 1; /* Take all available space */
   display: flex;
   flex-direction: column;
   
-  /* THE SECRET FIX: This tells flexbox "You can shrink!" which forces the scrollbar to appear */
-  min-height: 0; 
+  /* FORCE SCROLLING */
+  overflow-y: scroll !important; 
+  -webkit-overflow-scrolling: touch; /* Smooth scroll on iPhone */
   
-  overflow-y: auto; 
-  overflow-x: hidden;
-  
-  /* Reduced padding so the white space is smaller, just enough for the footer */
+  /* Reduce padding so the "White Thing" is smaller */
   padding-bottom: 60px; 
 }
 
-/* ==============================================
-   🚀 MOBILE SPECIFIC FIXES 
-   ============================================== */
+/* 5. MOBILE SPECIFIC OVERRIDES */
 @media screen and (max-width: 768px) {
-  
   .app-container {
-    align-items: flex-start !important; 
-    background-color: #ffffff !important; 
+    background-color: #ffffff;
+    align-items: flex-start;
+  }
+  
+  .phone-container {
+    max-width: 100%;
+    height: 100%;
   }
 
-  .phone-container {
-    max-width: 100% !important;
-    height: 100% !important;
-    box-shadow: none !important;
-  }
-  
-  /* Ensure the content uses all space */
-  .dashboard-content, .activity-box {
-    overflow: visible !important;
-    height: auto !important;
+  /* Safe Area for iPhones without Home Button */
+  .content-area {
+    padding-bottom: calc(65px + env(safe-area-inset-bottom));
   }
 }

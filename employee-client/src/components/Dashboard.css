@@ -217,3 +217,17 @@
   list-style: none;
 }
 
+
+
+.dashboard-container, 
+.dashboard-content {
+  /* Let the dashboard grow as tall as it needs to be */
+  height: auto !important;
+  min-height: auto !important;
+  
+
+  overflow: visible !important;
+  
+  padding-bottom: 0 !important;
+}
+
