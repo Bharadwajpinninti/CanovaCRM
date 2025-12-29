@@ -178,17 +178,22 @@
   background-color: #F3F4F6;
   border-radius: 1rem;
   padding: 1.0rem;
+  max-height: 300px; 
+  height: auto; 
   
-  /* 👇 Fills the wrapper and scrolls internally */
-  height:500px; 
-  overflow-y: auto;
+  /* Enable internal scrolling */
+  overflow-y: auto; 
   padding-right: 5px;
-  
-  /* Hide Scrollbar */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  display: block;
 }
-.activity-box::-webkit-scrollbar { display: none; }
+
+.activity-box {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
+}
+.activity-box::-webkit-scrollbar { 
+  display: none; /* Chrome/Safari */
+}
 
 .activity-items {
   list-style-type: disc;
