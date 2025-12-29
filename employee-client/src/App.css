@@ -1,105 +1,77 @@
-/* --- 1. GLOBAL RESET --- */
 * { box-sizing: border-box; }
 
 html, body, #root {
-  margin: 0; padding: 0; width: 100%; 
-  height: 100vh; 
-  height: 100dvh; /* Mobile fix */
-  overflow: hidden; /* Stop the entire browser window from scrolling */
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  overflow: hidden; 
+  background-color: #18181b; 
 }
 
-/* --- 2. MAIN CONTAINER (Desktop Simulator View) --- */
 .app-container {
   width: 100vw;
   height: 100vh;
-  height: 100dvh; 
-  
-  /* ✅ RESTORED: Black background for Desktop */
   background-color: #18181b; 
-  
-  display: flex; 
+  display: flex;
   justify-content: center; 
-  align-items: center; /* Center the phone on screen */
+  align-items: center; 
   font-family: -apple-system, sans-serif;
 }
 
-/* --- 3. PHONE FRAME --- */
 .phone-container {
-  width: 100%; 
+  width: 100%;
   max-width: 448px; 
   height: 100%;
+  max-height: 100vh; 
   background-color: #ffffff;
-  display: flex; 
-  flex-direction: column;
-  position: relative;
-  /* Shadow to make it look like a phone on desktop */
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-}
-
-/* --- 4. CONTENT AREA (The Scrolling Part for Dashboard/Leads) --- */
-.content-area {
-  flex: 1; 
   display: flex;
   flex-direction: column;
-  
-  /* Allow scrolling for Dashboard, Leads, etc. */
-  overflow-y: auto; 
-  -webkit-overflow-scrolling: touch; 
-  
-  /* Remove white space padding */
-  padding-bottom: 0; 
+  position: relative;
+  overflow: hidden; 
 }
 
-/* --- 5. HIDE SCROLLBARS (But keep scrolling working) --- */
-.content-area::-webkit-scrollbar { display: none; }
-.content-area { -ms-overflow-style: none; scrollbar-width: none; }
-
-
-/* ============================================================
-   🔒 LOGIN PAGE LOCK (NO SCROLLING)
-   ============================================================ */
-/* This specifically targets your Login Page container */
-.login-container {
-  position: fixed !important; /* Lock it to the screen */
-  top: 0; left: 0;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 9999; /* Sit on top of everything */
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0;
   
-  /* 🛑 DISABLE SCROLLING */
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+}
+.content-area::-webkit-scrollbar { display: none; }
+
+.login-container {
+  position: absolute; 
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  
   overflow: hidden !important; 
   
-  /* Center the login form */
-  display: flex !important;
+  background-color: #2563eb; 
+  display: flex;
   flex-direction: column;
-  justify-content: center; 
-  background-color: #ffffff; /* Ensure white background */
+  justify-content: center;
+  align-items: center;
 }
 
-
-/* ============================================================
-   📱 MOBILE VIEW OVERRIDES
-   ============================================================ */
 @media screen and (max-width: 768px) {
   
-  /* On real mobile, make background white (not black) */
   .app-container {
-    background-color: #ffffff !important;
-    align-items: flex-start !important; /* Start at top */
+    background-color: #ffffff !important; 
+    align-items: flex-start !important; 
+    height: 100dvh; 
   }
 
   .phone-container {
     max-width: 100% !important;
     height: 100% !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
   }
-  
-  /* Fix safe area for iPhones */
-  .content-area {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  
-  /* GLOBAL FIX for Leads/Schedule/Profile height */
+
   .leads-container, 
   .schedule-container, 
   .profile-container {
