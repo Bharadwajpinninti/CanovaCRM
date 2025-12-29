@@ -1,20 +1,20 @@
-/* Container fills the space */
+/* --- 1. MAIN CONTAINER (Full Screen) --- */
 .leads-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh; 
     background-color: #ffffff;
-    overflow: hidden;
+    overflow: hidden; 
 }
 
-/* Header */
+/* --- 2. HEADER --- */
 .leads-header {
     background-color: #2563eb;
-    padding: 1.5rem 1.5rem 2rem 1.5rem;
+    padding: 1.5rem;
     border-bottom-left-radius: 2rem;
     border-bottom-right-radius: 2rem;
     color: white;
-    flex-shrink: 0;
+    flex-shrink: 0; 
 }
 
 .brand-title {
@@ -23,14 +23,12 @@
     margin: 0 0 1rem 0;
 }
 
-.brand-highlight {
-    color: #facc15;
-}
+.brand-highlight { color: #facc15; }
 
 .nav-row {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
+    gap: 0.5rem;
     cursor: pointer;
 }
 
@@ -39,16 +37,13 @@
     font-weight: 700;
 }
 
-/* Search */
+/* --- 3. SEARCH BAR --- */
 .search-section {
     padding: 1.5rem;
     flex-shrink: 0;
 }
 
-.search-wrapper {
-    position: relative;
-    width: 100%;
-}
+.search-wrapper { position: relative; width: 100%; }
 
 .search-icon {
     position: absolute;
@@ -64,89 +59,71 @@
     border: none;
     border-radius: 0.75rem;
     padding: 0.9rem 1rem 0.9rem 3rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     outline: none;
 }
 
-/* --- LIST: STATIC (No Scroll) with GAP --- */
+/* --- 4. LEADS LIST (SCROLLABLE AREA) --- */
 .leads-list {
     padding: 0 1.5rem 1.5rem 1.5rem;
+    flex: 1; 
     display: flex;
     flex-direction: column;
-
-    /* Increased Gap */
-    gap: 2rem;
-
-    /* Static Page Logic */
-    flex: 1;
-    overflow: hidden;
+    gap: 1.5rem;
+    overflow-y: auto; 
+    padding-bottom: 80px; 
 }
 
-/* --- CARD STYLES --- */
-.lead-card-wrapper {
-    position: relative;
-}
+.leads-list::-webkit-scrollbar { display: none; }
+
+/* --- 5. CARDS --- */
+.lead-card-wrapper { position: relative; }
 
 .lead-card {
     background-color: #f9fafb;
     border: 1px solid #e5e7eb;
     border-radius: 1rem;
     padding: 1.2rem;
-
-    /* Increased Height */
-    min-height: 150px;
-
+    min-height: 140px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
 }
 
+/* Side Colored Strip */
 .side-strip {
     position: absolute;
     left: 0;
     top: 25%;
     bottom: 25%;
     width: 6px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+    border-radius: 0 4px 4px 0;
 }
+.side-strip.orange { background-color: #f97316; }
+.side-strip.yellow { background-color: #facc15; }
+.side-strip.cold   { background-color: #06b6d4; }
+.side-strip.gray   { background-color: #d1d5db; }
 
-.side-strip.orange {
-    background-color: #f97316;
-}
-
-.side-strip.yellow {
-    background-color: #facc15;
-}
-
-.side-strip.gray {
-    background-color: #d1d5db;
-}
-
-.side-strip.cold {
-    background-color: #06b6d4;
-}
-
+/* Card Content */
 .card-info {
     padding-left: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    justify-content: center;
 }
 
 .lead-name {
-    font-size: 1.1rem;
-    font-weight: 570;
+    font-size: 1.3rem;
+    font-weight: 600;
     color: #1f2937;
-    margin: 0;
+    margin: 0 0 0.4rem 0;
 }
 
-/* Increased gap between email and date */
 .lead-email {
     font-size: 0.8rem;
     color: #9ca3af;
-    margin: 0 0 2.4rem 0;
+    margin: 0 0 3rem 0;
     font-weight: 500;
 }
 
@@ -159,29 +136,26 @@
     color: #6b7280;
 }
 
-/* Increased Calendar Icon */
 .icon-img-small {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
 }
 
+/* Card Actions (Right Side) */
 .card-actions {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding-right: 0.5rem;
+    gap: 1.8rem;
 }
 
-/* Increased Circle Radius */
 .status-circle {
     width: 75px;
-    height:70px;
+    height: 75px;
     border-radius: 50%;
-    border-width: 6px;
-    border-style: solid;
-    background-color: white;
+    border: 6px solid #e5e7eb; 
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,7 +166,6 @@
     font-weight: 800;
     color: #374151;
     text-align: center;
-    line-height: 1;
 }
 
 .action-row {
@@ -200,114 +173,184 @@
     gap: 0.8rem;
 }
 
-/* Increased Action Icons */
 .action-img {
     width: 22px;
     height: 22px;
     cursor: pointer;
-    object-fit: contain;
 }
 
-/* --- POPUPS --- */
-/* Default Downwards */
+/* --- 6. POPUPS (BASE) --- */
 .popup-menu {
     position: absolute;
     right: 0;
-    top: 105%;
+    top: 105%; 
     z-index: 50;
     background: white;
-    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
     border: 1px solid #f3f4f6;
     border-radius: 0.75rem;
-    padding: 1.2rem;
-    width: max-content;
-    min-width: 160px;
+    padding: 1rem;
+    min-width: 150px;
 }
 
-/* --- UPWARDS POPUP (For 3rd item) --- */
+/* Opens Upwards (for last items) */
 .popup-menu.upwards {
     top: auto;
     bottom: 110%;
-    /* Displays above the icon */
-    margin-top: 0;
-    margin-bottom: 0.5rem;
 }
 
 .popup-label {
     font-size: 0.65rem;
     font-weight: 800;
     color: #9ca3af;
-    text-transform: uppercase;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     display: block;
 }
 
-.tag-options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
+/* --- TAG & DATE MENU BUTTONS --- */
+.tag-options { display: flex; flex-direction: column; gap: 0.5rem; }
 
 .tag-btn {
     border: none;
     color: white;
-    font-size: 0.7rem;
-    font-weight: 800;
-    padding: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.5rem;
     border-radius: 0.4rem;
     cursor: pointer;
-    transition: opacity 0.2s;
 }
 
-.tag-btn:hover {
-    opacity: 0.9;
-}
+.tag-btn.hot { background-color: #f97316; }
+.tag-btn.warm { background-color: #facc15; }
+.tag-btn.cold { background-color: #06b6d4; }
 
-.tag-btn.hot {
-    background-color: #f97316;
-}
-
-.tag-btn.warm {
-    background-color: #facc15;
-}
-
-.tag-btn.cold {
-    background-color: #06b6d4;
-}
-
-.input-group {
-    margin-bottom: 1rem;
-}
-
+.input-group { margin-bottom: 0.8rem; }
 .input-group label {
     font-size: 0.65rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #9ca3af;
     display: block;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
 }
 
-.input-group input,
-.status-select {
+.input-group input {
     width: 100%;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.4rem;
     padding: 0.5rem;
+    border-radius: 0.4rem;
+    border: 1px solid #e5e7eb;
     font-size: 0.8rem;
-    font-weight: 600;
-    color: #374151;
-    outline: none;
 }
 
+/* Standard Save Button (For Date Menu) */
 .save-btn {
     width: 100%;
     background-color: #1f2937;
     color: white;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.7rem;
+    padding: 0.6rem;
     font-size: 0.8rem;
-    font-weight: 800;
+    font-weight: 700;
     cursor: pointer;
     margin-top: 0.5rem;
+}
+
+/* --- 7. NEW STATUS POPUP UI (Exact Design) --- */
+
+/* Specialized overrides for the status menu */
+.status-popup-styled {
+    min-width: 220px; /* Wider than standard popup */
+}
+
+/* Header: "Lead Status (i)" */
+.status-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.status-popup-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e3a8a; /* Dark Blue */
+}
+
+.info-icon {
+    color: #9ca3af;
+    cursor: help;
+}
+
+/* Dropdown Styling */
+.status-select-wrapper {
+    margin-bottom: 1rem;
+}
+
+.status-select-box {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
+    color: #374151;
+    background-color: white;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Dark Pill Save Button (For Status Menu) */
+.save-btn-dark {
+    width: 100%;
+    background-color: #1f2937; /* Dark Gray */
+    color: white;
+    border: none;
+    border-radius: 2rem; /* Pill shape */
+    padding: 0.7rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.save-btn-dark:hover {
+    background-color: #111827;
+}
+
+/* --- 8. ERROR TOOLTIP BUBBLE --- */
+.error-tooltip-bubble {
+    position: absolute;
+    top: -55px; /* Floats above the popup */
+    right: 0;
+    
+    background-color: #f3f4f6;
+    color: #4b5563;
+    padding: 0.8rem 1rem;
+    border-radius: 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    white-space: nowrap;
+    border: 1px solid #e5e7eb;
+    
+    animation: popIn 0.2s ease-out;
+    z-index: 100;
+}
+
+/* Little triangle pointer for the bubble */
+.error-tooltip-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 20px;
+    width: 12px;
+    height: 12px;
+    background-color: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    transform: rotate(45deg);
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }

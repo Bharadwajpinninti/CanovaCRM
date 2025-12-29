@@ -7,6 +7,8 @@ import leadRouter from './routes/leadRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
 import employeeRouter from './routes/employeeRoutes.js';
 import dashboardRoutes from './routes/dashboard.js'
+import Employee from './models/Employee.js';
+import cron from 'node-cron';
 
 
 // App Config
@@ -21,6 +23,15 @@ app.use(cors());
 const startServer = async () => {
     await connectDB();     // DB connect
     await seedAdmin();     // ✅ seed admin ONCE
+
+cron.schedule('0 0 * * *', async () => {
+  try {
+    console.log('🕛 Midnight Reset: Setting all employees to Inactive');
+    await Employee.updateMany({}, { status: 'Inactive' });
+  } catch (error) {
+    console.error('Error in midnight reset:', error);
+  }
+});
 
     app.listen(port, () => {
         console.log(`Server started on PORT ${port}`);

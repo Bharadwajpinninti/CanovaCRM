@@ -38,7 +38,7 @@ const leadSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Employee', // This must match the model name in Employee.js
     default: null 
-  }
+  } 
 
 }, { timestamps: true });
 

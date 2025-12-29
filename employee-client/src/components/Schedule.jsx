@@ -1,53 +1,88 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import './Schedule.css';
 import { Search, ChevronLeft, SlidersHorizontal, MapPin, ChevronDown } from 'lucide-react';
 
 const Schedule = ({ onBack }) => {
+  const [scheduleData, setScheduleData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterType, setFilterType] = useState('All'); 
   const [searchQuery, setSearchQuery] = useState('');
   
-  // STATE: Tracks which card is currently BLUE (Active)
-  const [activeId, setActiveId] = useState(1); 
-  
+  const [activeId, setActiveId] = useState(null); 
   const filterRef = useRef(null);
 
-  const scheduleData = [
-    { 
-      id: 1, 
-      type: "Referral", 
-      phone: "949-365-6533", 
-      date: "10/04/25", 
-      contact: "Brooklyn Williamson" 
-    },
-    { 
-      id: 2, 
-      type: "Referral", 
-      phone: "365-865-8854", 
-      date: "10/04/25", 
-      contact: "Julie Watson"
-    },
-    { 
-      id: 3, 
-      type: "Cold call", 
-      phone: "654-692-8895", 
-      date: "12/04/25", 
-      contact: "Jenny Alexander"
-    },
-  ];
+  // --- HELPER: GET AVATAR INITIALS ---
+  const getAvatarInitials = (name) => {
+    if (!name) return "NA";
+    const cleanName = name.trim();
+    const parts = cleanName.split(" ").filter(p => p.length > 0);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    if (parts.length === 1) {
+      const letters = parts[0].match(/[a-zA-Z]/g);
+      if (!letters) return parts[0].slice(0, 2).toUpperCase();
+      if (letters.length === 1) return letters[0].toUpperCase();
+      return (letters[0] + letters[letters.length - 1]).toUpperCase();
+    }
+    return "NA";
+  };
 
+  // --- FETCH DATA ---
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      
+      const user = JSON.parse(storedUser);
+      const employeeId = user.employeeId || user._id || user.id;
+
+      try {
+        const res = await axios.get(`http://localhost:5000/api/leads/scheduled/${employeeId}`);
+        setScheduleData(res.data);
+        if(res.data.length > 0) setActiveId(res.data[0]._id);
+      } catch (error) {
+        console.error("Error fetching schedules:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSchedules();
+  }, []);
+
+  // --- FILTERING LOGIC (Fixed) ---
   const filteredData = scheduleData.filter(item => {
-    const matchesSearch = item.contact.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          item.phone.includes(searchQuery);
-    const matchesFilter = filterType === 'All' ? true : item.date === "10/04/25";
+    // FIX 2: Handle Name (Check multiple fields)
+    const fName = item.firstName || "";
+    const lName = item.lastName || "";
+    const singleName = item.name || item.contact || ""; // Fallback
+    
+    const fullName = (fName || lName) ? `${fName} ${lName}`.trim() : singleName;
+    
+    // Search Logic
+    const matchesSearch = fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (item.leadId && item.leadId.toString().includes(searchQuery));
+    
+    // FIX 1: Today Filter Logic
+    let matchesFilter = true;
+    if (filterType === 'Today') {
+      if (!item.scheduleDate) return false;
+      
+      // Convert both to YYYY-MM-DD for accurate comparison
+      const today = new Date().toLocaleDateString('en-CA'); // 'en-CA' gives YYYY-MM-DD
+      const itemDate = new Date(item.scheduleDate).toLocaleDateString('en-CA');
+      
+      matchesFilter = itemDate === today;
+    }
+
     return matchesSearch && matchesFilter;
   });
 
+  // Close filter popup
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (filterRef.current && !filterRef.current.contains(event.target)) {
-        setIsFilterOpen(false);
-      }
+      if (filterRef.current && !filterRef.current.contains(event.target)) setIsFilterOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -55,7 +90,7 @@ const Schedule = ({ onBack }) => {
 
   return (
     <div className="schedule-container">
-      {/* 1. Header */}
+      {/* Header */}
       <div className="schedule-header">
         <h1 className="brand-title">Canova<span className="brand-highlight">CRM</span></h1>
         <div className="nav-row" onClick={onBack}>
@@ -64,27 +99,24 @@ const Schedule = ({ onBack }) => {
         </div>
       </div>
 
-      {/* 2. Search & Filter */}
+      {/* Search & Filter */}
       <div className="search-filter-section">
         <div className="search-wrapper">
           <Search className="search-icon" size={20} />
           <input 
             type="text" 
-            placeholder="Search" 
+            placeholder="Search Name or ID" 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input" 
           />
         </div>
-
         <button 
           className={`filter-btn ${isFilterOpen ? 'active' : ''}`}
           onClick={() => setIsFilterOpen(!isFilterOpen)}
         >
           <SlidersHorizontal size={22} />
         </button>
-
-        {/* Popup */}
         {isFilterOpen && (
           <div className="filter-popup" ref={filterRef}>
             <p className="filter-label">FILTER</p>
@@ -102,44 +134,48 @@ const Schedule = ({ onBack }) => {
         )}
       </div>
 
-      {/* 3. Schedule List (Static - Fits 3 items) */}
+      {/* List */}
       <div className="schedule-list">
-        {filteredData.length > 0 ? (
+        {loading ? (
+          <div className="empty-state">Loading schedules...</div>
+        ) : filteredData.length > 0 ? (
           filteredData.map((item) => {
-            // Check if this specific item is the active one
-            const isActive = activeId === item.id;
+            const isActive = activeId === item._id;
+            
+            // Name Logic for Display
+            const fName = item.firstName || "";
+            const lName = item.lastName || "";
+            const singleName = item.name || item.contact || "Unknown Lead";
+            const displayName = (fName || lName) ? `${fName} ${lName}`.trim() : singleName;
+            
+            const initials = getAvatarInitials(displayName);
 
             return (
               <div 
-                key={item.id} 
+                key={item._id} 
                 className={`schedule-card ${isActive ? 'active' : ''}`}
-                onClick={() => setActiveId(item.id)} // <-- Click to set Blue
+                onClick={() => setActiveId(item._id)}
               >
-                
                 <div className="card-top-row">
-                  <h4 className="card-type">{item.type}</h4>
+                  <h4 className="card-type">{item.source || "Lead"}</h4>
                   <div className="card-date-group">
                     <span className="date-label">Date</span>
-                    <span className="date-value">{item.date}</span>
+                    <span className="date-value">
+                      {new Date(item.scheduleDate).toLocaleDateString('en-GB')}
+                    </span>
                   </div>
                 </div>
 
-                <p className="card-phone">{item.phone}</p>
+                <p className="card-phone">ID: {item.leadId || item._id.slice(-6)}</p>
 
                 <div className="card-details">
                   <div className="detail-row">
-                    <div className="icon-box">
-                      <MapPin size={14} />
-                    </div>
-                    <span className="detail-text">Call</span>
+                    <div className="icon-box"><MapPin size={14} /></div>
+                    <span className="detail-text">{item.location || "No Location"}</span>
                   </div>
                   <div className="detail-row">
-                    <img 
-                      src={`https://ui-avatars.com/api/?name=${item.contact}&background=random`} 
-                      alt="avatar" 
-                      className="contact-avatar" 
-                    />
-                    <span className="contact-name">{item.contact}</span>
+                    <div className="contact-avatar-placeholder">{initials}</div>
+                    <span className="contact-name">{displayName}</span>
                   </div>
                 </div>
               </div>

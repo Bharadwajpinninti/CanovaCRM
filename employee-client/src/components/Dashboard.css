@@ -1,20 +1,20 @@
-/* Dashboard Container: Flex Column to fill height exactly */
+/* --- 1. MAIN CONTAINER (Locks Full Screen) --- */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   background-color: #ffffff;
-  overflow: hidden; /* Prevents main page scroll */
+  overflow: hidden; /* PREVENTS WHOLE PAGE SCROLL */
 }
 
-/* --- Header Section --- */
+/* --- 2. HEADER (Fixed) --- */
 .dashboard-header {
   background-color: #2563eb;
-  padding: 1.5rem 1.5rem 1.5rem 1.5rem; /* Restored standard padding */
+  padding: 1.5rem;
   border-bottom-left-radius: 2.5rem;
   border-bottom-right-radius: 2.5rem;
   color: white;
-  flex-shrink: 0; /* Header never shrinks */
+  flex-shrink: 0; 
 }
 
 .brand-title {
@@ -36,16 +36,19 @@
   margin: 0;
 }
 
-/* --- Main Content --- */
+/* --- 3. CONTENT AREA (Fixed - No Scroll Here) --- */
 .dashboard-content {
-  padding: 1.25rem; /* Restored comfortable padding */
+  padding: 1.25rem 1.25rem 0.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* Restored nice gap between sections */
+  gap: 1.25rem;
   
-  /* CRITICAL: Allows content to fill space but not overflow parent */
+  /* Flex settings to fill screen */
   flex: 1; 
   min-height: 0; 
+  
+  /* 👇 CRITICAL FIX: STOP MAIN PAGE SCROLLING */
+  overflow: hidden; 
 }
 
 .section-label {
@@ -55,19 +58,20 @@
   margin: 0 0 0.5rem 0;
 }
 
-/* Timings Section (Top Part - Static) */
+/* --- 4. TOP SECTION (Timings & Break) --- */
+/* This section takes natural height and stays fixed */
 .section-wrapper {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  flex-shrink: 0; /* Prevents Timings from getting squished */
+  flex-shrink: 0; /* Prevents shrinking */
 }
 
 /* Blue Card Styles */
 .blue-card {
   background-color: #2563eb;
   border-radius: 1rem;
-  padding: 1rem 1.2rem;
+  padding: 0.4rem 1.2rem;
   color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -106,70 +110,85 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 .toggle-btn.white { background-color: #ffffff; }
 .toggle-btn.green { background-color: #22c55e; }
 .toggle-btn.red { background-color: #ef4444; }
 
-/* Break Section */
+/* Break Section Header */
 .break-container {
-  background-color: #f3f4f6;
   border-radius: 1rem;
   overflow: hidden;
 }
-
 .header-strip {
-  padding: 0.8rem 1.2rem;
+  border-radius: 12px 12px 0 0; 
 }
 
-.break-list {
-  padding: 0.8rem 1.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+/* --- BREAK LIST UI --- */
+.break-list-wrapper {
+  background: #EBF3FA;
+  border-radius: 0 0 12px 12px;
+  
+  /* Internal Scroll Only */
+  height: 240px; 
+  overflow-y: auto; 
+  
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
 }
+.break-list-wrapper::-webkit-scrollbar { display: none; }
+
+.break-list { padding: 15px; }
 
 .list-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
+  margin-bottom: 20px; 
+}
+
+.info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.info-col.right { align-items: flex-end; }
+
+.label-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #000;
+}
+.value-text {
+  font-size: 0.9rem;
   font-weight: 600;
   color: #374151;
 }
-.col.right { text-align: right; }
-.col .th { font-size: 0.7rem; font-weight: 700; display: block; margin-bottom: 2px;}
 
-/* --- RECENT ACTIVITY (The Smart Fix) --- */
+/* --- 5. RECENT ACTIVITY (SCROLLABLE AREA) --- */
 .activity-wrapper {
   display: flex;
   flex-direction: column;
   
-  /* Flex 1 makes this wrapper grow to fill whatever height is left on screen */
+  /* 👇 Fills remaining screen space */
   flex: 1; 
-  min-height: 0; /* Crucial for internal scrolling */
-  padding-bottom: 0.5rem;
+  min-height: 0; 
+  padding-bottom: 0px;
 }
 
 .activity-box {
-  background-color: #f3f4f6;
+  background-color: #F3F4F6;
   border-radius: 1rem;
-  padding: 1rem;
+  padding: 1.0rem;
   
-  /* Height 100% fills the wrapper */
-  height: 100%; 
-  
-  /* Internal Scroll Only */
+  /* 👇 Fills the wrapper and scrolls internally */
+  height:500px; 
   overflow-y: auto;
-  scrollbar-width: thin;
+  padding-right: 5px;
+  
+  /* Hide Scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
-.activity-box::-webkit-scrollbar {
-  width: 4px;
-}
-.activity-box::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 10px;
-}
+.activity-box::-webkit-scrollbar { display: none; }
 
 .activity-items {
   list-style-type: disc;
@@ -178,9 +197,23 @@
 }
 
 .activity-items li {
-  margin-bottom: 0.8rem;
-  font-size: 0.85rem;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
   color: #4b5563;
-  line-height: 1.4;
+  line-height: 1.5;
   font-weight: 500;
 }
+
+.time-text {
+  color: #6B7280;
+  font-size: 0.85em;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9CA3AF;
+  padding-top: 40px;
+  font-style: italic;
+  list-style: none;
+}
+

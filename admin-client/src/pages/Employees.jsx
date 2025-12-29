@@ -39,8 +39,11 @@ const Employees = () => {
       // setLoading(true); 
       const { data } = await axios.get(`${backendUrl}/api/admin/employees`);
       if (data.success) {
-        setEmployees(data.employees);
-        setFilteredEmployees(data.employees);
+        // Reverse the array to show the newest (last added) employee first
+        const sortedEmployees = [...data.employees].reverse(); 
+        
+        setEmployees(sortedEmployees);
+        setFilteredEmployees(sortedEmployees);
       }
     } catch (error) { 
         console.error("Error:", error); 
