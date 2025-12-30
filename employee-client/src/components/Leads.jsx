@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Leads.css';
-import { ChevronLeft, Search, Info } from 'lucide-react'; // ✅ Restored Lucide Icons
+import { ChevronLeft, Search, Info, AlertCircle } from 'lucide-react'; // ✅ Added AlertCircle
 
 // --- ASSETS ---
 import calendarImg from '../assets/schedule_icon.png';
@@ -27,6 +27,9 @@ const Leads = ({ onBack }) => {
   // Status Logic
   const [tempStatus, setTempStatus] = useState("Ongoing");
   const [showStatusError, setShowStatusError] = useState(false);
+
+  // --- NEW: ERROR MESSAGE STATE ---
+  const [errorMessage, setErrorMessage] = useState("");
 
   const popupRef = useRef(null);
 
@@ -96,6 +99,17 @@ const Leads = ({ onBack }) => {
     return now > scheduleTime;
   };
 
+  // --- HELPER FOR ERROR HANDLING ---
+  const handleApiError = (error) => {
+    if (error.response && error.response.status === 403) {
+      setErrorMessage(error.response.data.message || "Action Restricted");
+      // Auto-hide after 3.5 seconds
+      setTimeout(() => setErrorMessage(""), 3500);
+    } else {
+      console.error("API Error:", error);
+    }
+  };
+
   // --- 5. HANDLERS ---
   const handleTagClick = async (leadId, newType) => {
     try {
@@ -109,8 +123,8 @@ const Leads = ({ onBack }) => {
       // ✅ Updated URL
       await axios.put(`${backendUrl}/api/leads/${leadId}`, { type: newType });
     } catch (error) {
-      console.error("Error updating tag:", error);
-      fetchLeads();
+      handleApiError(error); // 👈 Added Error Handler
+      fetchLeads(); // Revert optimistic update on failure
     }
   };
 
@@ -129,7 +143,7 @@ const Leads = ({ onBack }) => {
       // ✅ Updated URL
       await axios.put(`${backendUrl}/api/leads/${leadId}`, { scheduleDate: isoString });
     } catch (error) {
-      console.error("Error updating date:", error);
+      handleApiError(error); // 👈 Added Error Handler
     }
   };
 
@@ -155,7 +169,7 @@ const Leads = ({ onBack }) => {
       // ✅ Updated URL
       await axios.put(`${backendUrl}/api/leads/${leadId}`, { status: tempStatus });
     } catch (error) {
-      alert(error.response?.data?.message || "Error updating status");
+      handleApiError(error); // 👈 Added Error Handler
       fetchLeads();
     }
   };
@@ -219,6 +233,27 @@ const Leads = ({ onBack }) => {
           />
         </div>
       </div>
+
+      {/* 🔥 NEW COOL ERROR BANNER (Only shows when error exists) */}
+      {errorMessage && (
+        <div style={{
+          margin: '10px 20px 0 20px',
+          background: 'rgba(254, 226, 226, 0.9)', // Soft Red Glass effect
+          border: '1px solid #f87171',
+          borderRadius: '12px',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#b91c1c',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          animation: 'slideDown 0.3s ease-out',
+          backdropFilter: 'blur(4px)'
+        }}>
+          <AlertCircle size={20} style={{ marginRight: '10px', flexShrink: 0 }} />
+          <span style={{ fontSize: '14px', fontWeight: '600' }}>{errorMessage}</span>
+        </div>
+      )}
 
       <div className="leads-list">
         {loading ? <p style={{ textAlign: 'center', marginTop: 20 }}>Loading Leads...</p> :
@@ -319,6 +354,14 @@ const Leads = ({ onBack }) => {
             );
           })}
       </div>
+      
+      {/* Inline Animation Style for the Banner */}
+      <style>{`
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
