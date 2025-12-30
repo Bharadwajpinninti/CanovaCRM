@@ -63,12 +63,12 @@ const Employees = () => {
       const first = (emp.firstName || "").toLowerCase();
       const last = (emp.lastName || "").toLowerCase();
       const email = (emp.email || "").toLowerCase();
-      const fullName = `${first} ${last}`; // 👈 This combines them so "Hello w" works
+      const fullName = `${first} ${last}`; 
 
       return (
         first.includes(lowerTerm) ||
         last.includes(lowerTerm) ||
-        fullName.includes(lowerTerm) || // 👈 Checks the combined name
+        fullName.includes(lowerTerm) || 
         email.includes(lowerTerm)
       );
     });

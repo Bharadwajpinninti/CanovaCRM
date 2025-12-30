@@ -154,82 +154,96 @@ export const uploadLeadsCSV = async (req, res) => {
         if (!csvData) return res.status(400).json({ success: false, message: "No CSV data found" });
 
         const rows = csvData.split(/\r?\n/);
-        const cleanRows = rows.filter(row => row.trim() !== "");
+        // Remove header row and empty rows
+        const dataRows = rows.slice(1).filter(row => row.trim() !== "");
 
-        // 1. Fetch Active Employees
+        // Fetch active employees
         const employees = await Employee.find({ status: "Active" });
 
-        let leadsAdded = 0;
+        const leadsToInsert = [];
+        const employeeUpdates = {}; // Track count updates per employee
 
-        for (let i = 1; i < cleanRows.length; i++) {
-            const rowString = cleanRows[i];
-            const cols = rowString.split(',');
+        // Process rows in memory first
+        for (const rowString of dataRows) {
+            // Regex to handle commas inside quotes correctly
+            const cols = rowString.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || rowString.split(',');
 
-            const name = cols[0]?.trim();
-            const email = cols[1]?.trim().toLowerCase();
-            const source = cols[2]?.trim();
-            const date = cols[3]?.trim();
-            const location = cols[4]?.trim();
-            const leadLanguage = cols[5]?.trim();
+            const name = cols[0]?.replace(/"/g, "").trim();
+            const email = cols[1]?.replace(/"/g, "").trim().toLowerCase();
+            const source = cols[2]?.replace(/"/g, "").trim();
+            const date = cols[3]?.replace(/"/g, "").trim();
+            const location = cols[4]?.replace(/"/g, "").trim();
+            const leadLanguage = cols[5]?.replace(/"/g, "").trim();
 
-            if (!name || !email) continue; 
-            // A. Filter by Language (Matching your Schema: 'language' is a String)
+            if (!name || !email) continue;
+
+            // Filter employees by language
             let eligibleEmployees = employees.filter(emp => {
-                // Safe check: ensure employee has a language set
                 const empLang = emp.language ? emp.language.toLowerCase() : "";
-                return empLang === leadLanguage.toLowerCase();
+                return empLang === (leadLanguage ? leadLanguage.toLowerCase() : "");
             });
 
-            // B. LOAD BALANCING (Sort Low -> High using 'currentLeadCount')
-            // This ensures Equal Distribution
+            // Sort by least loaded for equal distribution
             eligibleEmployees.sort((a, b) => (a.currentLeadCount || 0) - (b.currentLeadCount || 0));
 
             let selectedEmployee = null;
 
-        
+            // Check threshold limit (< 3)
             for (const emp of eligibleEmployees) {
-              
-                if ((emp.currentLeadCount || 0) < 3) { 
+                if ((emp.currentLeadCount || 0) < 3) {
                     selectedEmployee = emp;
-                    break; 
+                    break;
                 }
             }
 
-        
-
             let assignedTo = null;
-            
+
             if (selectedEmployee) {
                 assignedTo = selectedEmployee._id;
-                
-                
+
+                // Update in-memory count immediately for next iteration
                 selectedEmployee.currentLeadCount = (selectedEmployee.currentLeadCount || 0) + 1;
                 selectedEmployee.assigned = (selectedEmployee.assigned || 0) + 1;
 
-                // Update Database
-                // We increment 'currentLeadCount' (for limit) AND 'assigned' (for stats)
-                await Employee.findByIdAndUpdate(selectedEmployee._id, { 
-                    $inc: { currentLeadCount: 1, assigned: 1 } 
-                }); 
+                // Track for bulk DB update
+                if (!employeeUpdates[selectedEmployee._id]) {
+                    employeeUpdates[selectedEmployee._id] = 0;
+                }
+                employeeUpdates[selectedEmployee._id]++;
             }
 
-            try {
-                const newLead = new Lead({
-                    name, email, source, date, location, language: leadLanguage,
-                    assignedTo, 
-                    status: "ongoing",
-                    type: "-", 
-                    scheduleDate: "-"
-                });
-
-                await newLead.save();
-                leadsAdded++; 
-            } catch (innerError) {
-                console.log(`Skipping row ${i}: ${innerError.message}`);
-            }
+            leadsToInsert.push({
+                name,
+                email,
+                source,
+                date,
+                location,
+                language: leadLanguage,
+                assignedTo,
+                status: "ongoing",
+                type: "-",
+                scheduleDate: "-"
+            });
         }
 
-        res.json({ success: true, count: leadsAdded, message: "CSV Processed" });
+        // Insert all leads at once
+        const leadInsertPromise = Lead.insertMany(leadsToInsert);
+
+        // Prepare bulk employee updates
+        const empUpdatePromises = Object.keys(employeeUpdates).map(empId => {
+            const count = employeeUpdates[empId];
+            return Employee.findByIdAndUpdate(empId, {
+                $inc: { currentLeadCount: count, assigned: count }
+            });
+        });
+
+        // Execute all DB operations in parallel
+        await Promise.all([
+            leadInsertPromise,
+            ...empUpdatePromises
+        ]);
+
+        res.json({ success: true, count: leadsToInsert.length, message: "CSV Processed Successfully" });
 
     } catch (error) {
         console.error("CSV Global Error:", error);
