@@ -145,7 +145,9 @@ export const getAllLeads = async (req, res) => {
 
 
 
-// --- CSV UPLOAD CONTROLLER ---// 
+
+
+// --- CSV UPLOAD CONTROLLER ---
 export const uploadLeadsCSV = async (req, res) => {
     try {
         const { csvData } = req.body;
@@ -168,42 +170,62 @@ export const uploadLeadsCSV = async (req, res) => {
             const source = cols[2]?.trim();
             const date = cols[3]?.trim();
             const location = cols[4]?.trim();
-            const language = cols[5]?.trim().toLowerCase();
+            const leadLanguage = cols[5]?.trim();
 
             if (!name || !email) continue; 
+            // A. Filter by Language (Matching your Schema: 'language' is a String)
+            let eligibleEmployees = employees.filter(emp => {
+                // Safe check: ensure employee has a language set
+                const empLang = emp.language ? emp.language.toLowerCase() : "";
+                return empLang === leadLanguage.toLowerCase();
+            });
 
-            // --- Assignment Logic ---
-            let assignedTo = null;
-            const eligibleEmployees = employees.filter(emp => emp.language.toLowerCase() === language);
+            // B. LOAD BALANCING (Sort Low -> High using 'currentLeadCount')
+            // This ensures Equal Distribution
+            eligibleEmployees.sort((a, b) => (a.currentLeadCount || 0) - (b.currentLeadCount || 0));
 
             let selectedEmployee = null;
-            if (eligibleEmployees.length > 0) {
-                for (const emp of eligibleEmployees) {
-                    if (emp.assigned < 3) { // limit check
-                        selectedEmployee = emp;
-                        break; 
-                    }
+
+        
+            for (const emp of eligibleEmployees) {
+              
+                if ((emp.currentLeadCount || 0) < 3) { 
+                    selectedEmployee = emp;
+                    break; 
                 }
             }
 
+        
+
+            let assignedTo = null;
+            
             if (selectedEmployee) {
                 assignedTo = selectedEmployee._id;
-                selectedEmployee.assigned += 1; // Memory Update
-                await Employee.findByIdAndUpdate(selectedEmployee._id, { $inc: { assigned: 1 } }); // DB Update
+                
+                
+                selectedEmployee.currentLeadCount = (selectedEmployee.currentLeadCount || 0) + 1;
+                selectedEmployee.assigned = (selectedEmployee.assigned || 0) + 1;
+
+                // Update Database
+                // We increment 'currentLeadCount' (for limit) AND 'assigned' (for stats)
+                await Employee.findByIdAndUpdate(selectedEmployee._id, { 
+                    $inc: { currentLeadCount: 1, assigned: 1 } 
+                }); 
             }
 
-            // --- Safe Save Logic ---
             try {
                 const newLead = new Lead({
-                    name, email, source, date, location, language,
-                    assignedTo, status: "ongoing", type: "-", scheduleDate: "-"
+                    name, email, source, date, location, language: leadLanguage,
+                    assignedTo, 
+                    status: "ongoing",
+                    type: "-", 
+                    scheduleDate: "-"
                 });
 
                 await newLead.save();
-                leadsAdded++; // This only happens if save succeeds
+                leadsAdded++; 
             } catch (innerError) {
-                console.log(`Skipping row ${i} (${email}): ${innerError.message}`);
-                // Continue loop even if this row fails
+                console.log(`Skipping row ${i}: ${innerError.message}`);
             }
         }
 
@@ -214,7 +236,6 @@ export const uploadLeadsCSV = async (req, res) => {
         res.status(500).json({ success: false, message: "Server Error" });
     }
 };
-
 
 
 export const getAssignedLeads = async (req, res) => {
