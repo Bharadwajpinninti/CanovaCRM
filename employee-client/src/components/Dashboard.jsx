@@ -1,12 +1,10 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios'; 
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  // FIXED: Now checks .env file first (for Vercel), defaults to localhost (for dev)
+  // FIXED: Environment variable check
   const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
   // --- 1. USER ID ---
@@ -19,103 +17,49 @@ const Dashboard = () => {
 
   const currentUserId = getUserData();
   
-  // Ref prevents overwriting DB with empty state on load
-  const isDataReady = useRef(false);
-
-  const getKey = useCallback((key) => `dash_${currentUserId}_${key}`, [currentUserId]);
-
-  // --- 2. STATE ---
+  // --- 2. STATE (2-Variable Strategy) ---
   const [employeeName, setEmployeeName] = useState("Employee");
   const [activities, setActivities] = useState([]);
 
-  // Timing State
-  const [status, setStatus] = useState('inactive');
+  // Variables: null (Grey), true (Green), false (Red)
+  const [checkInStatus, setCheckInStatus] = useState(null);
+  const [breakStatus, setBreakStatus] = useState(null);
+
+  // Display Data
   const [checkInTime, setCheckInTime] = useState(null);
   const [checkOutTime, setCheckOutTime] = useState(null);
-  const [breakStartTime, setBreakStartTime] = useState(null);
-  const [breakEndTime, setBreakEndTime] = useState(null);
-  const [hasTakenBreak, setHasTakenBreak] = useState(false);
   const [breakHistory, setBreakHistory] = useState([]);
 
-  // --- 3. LOAD DATA ---
+  // --- 3. LOAD DATA (FROM API) ---
   useEffect(() => {
     if (!currentUserId) return;
-
-    isDataReady.current = false;
 
     // 1. Set Name
     const userObj = JSON.parse(localStorage.getItem("user"));
     if (userObj) setEmployeeName(`${userObj.firstName || ""} ${userObj.lastName || ""}`.trim());
 
-    // 2. Midnight Reset Logic
-    const today = new Date().toLocaleDateString();
-    const lastDate = localStorage.getItem(`dash_${currentUserId}_lastActiveDate`);
-    const isNewDay = lastDate !== today;
-
-    const load = (key, def) => {
-      if (isNewDay) return def; 
-      const val = localStorage.getItem(`dash_${currentUserId}_${key}`);
-      return val ? val : def;
+    // 2. Fetch Persistent Status from Backend
+    const fetchStatus = async () => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/api/employee/dashboard-status/${currentUserId}`);
+            if (data.success) {
+                setCheckInStatus(data.checkInStatus);
+                setBreakStatus(data.breakStatus);
+                setCheckInTime(data.checkInTime);
+                setCheckOutTime(data.checkOutTime);
+                setBreakHistory(data.breakHistory);
+            }
+        } catch (error) {
+            console.error("Failed to load status", error);
+        }
     };
-    
-    const loadBool = (key) => {
-      if (isNewDay) return false;
-      return localStorage.getItem(`dash_${currentUserId}_${key}`) === 'true';
-    };
 
-    // If new day, clear old local storage
-    if (isNewDay) {
-      ['status', 'checkInTime', 'checkOutTime', 'breakStartTime', 'breakEndTime', 'hasTakenBreak'].forEach(k => {
-        localStorage.removeItem(`dash_${currentUserId}_${k}`);
-      });
-      localStorage.setItem(`dash_${currentUserId}_lastActiveDate`, today);
-    }
-
-    // Load State
-    setStatus(load('status', 'inactive'));
-    setCheckInTime(load('checkInTime', null));
-    setCheckOutTime(load('checkOutTime', null));
-    setBreakStartTime(load('breakStartTime', null));
-    setBreakEndTime(load('breakEndTime', null));
-    setHasTakenBreak(loadBool('hasTakenBreak'));
-
-    const savedHist = localStorage.getItem(`dash_${currentUserId}_breakHistory`);
-    setBreakHistory(savedHist ? JSON.parse(savedHist) : []);
-
-    setTimeout(() => {
-      isDataReady.current = true;
-    }, 50);
-
-    // Fetch My Leads for Activity Feed
+    fetchStatus();
     fetchEmployeeLeads(currentUserId);
 
-  }, [currentUserId]); 
+  }, [currentUserId, backendUrl]); 
 
-  // --- 4. PERSIST STATE ---
-  useEffect(() => {
-    if (!currentUserId || !isDataReady.current) return;
-
-    const today = new Date().toLocaleDateString();
-    localStorage.setItem(getKey('lastActiveDate'), today);
-
-    localStorage.setItem(getKey('status'), status);
-    localStorage.setItem(getKey('hasTakenBreak'), hasTakenBreak);
-    
-    const saveOrRemove = (key, val) => {
-      if (val) localStorage.setItem(getKey(key), val);
-      else localStorage.removeItem(getKey(key));
-    };
-    
-    saveOrRemove('checkInTime', checkInTime);
-    saveOrRemove('checkOutTime', checkOutTime);
-    saveOrRemove('breakStartTime', breakStartTime);
-    saveOrRemove('breakEndTime', breakEndTime);
-    
-    localStorage.setItem(getKey('breakHistory'), JSON.stringify(breakHistory));
-
-  }, [status, checkInTime, checkOutTime, breakStartTime, breakEndTime, hasTakenBreak, breakHistory, currentUserId, getKey]);
-
-  // --- 5. LOGIC & API ---
+  // --- 4. LOGIC & API ---
   const fetchEmployeeLeads = async (id) => {
     try {
       const res = await axios.get(`${backendUrl}/api/leads/assigned/${id}`);
@@ -148,16 +92,10 @@ const Dashboard = () => {
       });
     });
 
-    // Add Check-in/out actions from local state
-    if (checkInTime) list.push({ message: "Checked in for the day", time: "Today at " + checkInTime, raw: new Date() });
-    if (checkOutTime) list.push({ message: "Checked out", time: "Today at " + checkOutTime, raw: new Date() });
-
     setActivities(list.sort((a, b) => b.raw - a.raw));
   };
 
   // --- Helpers ---
-  const getCurrentTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  
   const getRelDay = (dStr) => {
     const days = Math.floor((new Date().setHours(0,0,0,0) - new Date(dStr).setHours(0,0,0,0)) / 86400000);
     return days === 0 ? "today" : days === 1 ? "yesterday" : `${days} days ago`;
@@ -172,63 +110,75 @@ const Dashboard = () => {
     return days + (days === 1 ? " day ago" : " days ago");
   };
 
-  // --- 6. HANDLERS (API CALLS) ---
-  const handleMainToggle = async () => {
-    if (!currentUserId) return;
-
-    // --- CHECK IN ---
-    if (!checkInTime) {
-      try {
-        // API: Set status to Active
-        await axios.put(`${backendUrl}/api/employee/${currentUserId}/status`, { status: 'Active' });
-        
-        setCheckInTime(getCurrentTime());
-        setStatus('active');
-      } catch (error) {
-        console.error("Check-in Error:", error);
-        alert("Failed to check in.");
-      }
-    } 
-    // --- CHECK OUT ---
-    else if (checkInTime && !checkOutTime) {
-      if (status === 'on_break') return alert("Please end your break before checking out.");
-      
-      try {
-        // API: Set status to Inactive
-        await axios.put(`${backendUrl}/api/employee/${currentUserId}/status`, { status: 'Inactive' });
-        
-        setCheckOutTime(getCurrentTime());
-        setStatus('completed'); 
-      } catch (error) {
-        console.error("Check-out Error:", error);
-        alert("Failed to check out.");
-      }
-    }
-  };
-
-  const handleBreakToggle = () => {
-    if (!checkInTime || checkOutTime || hasTakenBreak) return;
-    const now = getCurrentTime();
-
-    if (!breakStartTime) {
-      setBreakStartTime(now);
-      setStatus('on_break');
-    } else if (!breakEndTime) {
-      setBreakEndTime(now);
-      setStatus('active');
-      setHasTakenBreak(true);
-      setBreakHistory(prev => [{ break: breakStartTime, ended: now, date: new Date().toLocaleDateString() }, ...prev]);
-    }
-  };
-
-  // --- 7. UI HELPERS ---
   const getGreeting = () => {
     const h = new Date().getHours();
     return h < 12 ? "Good Morning" : h < 18 ? "Good Afternoon" : "Good Evening";
   };
+
   
-  const mainBtnClass = !checkInTime ? 'white' : (!checkOutTime ? 'green' : 'red');
-  const breakBtnClass = hasTakenBreak ? 'red' : (status === 'on_break' ? 'green' : 'white');
+  
+  const handleMainToggle = async () => {
+    if (!currentUserId) return;
+
+   
+    if (checkInStatus === null) {
+      try {
+        const { data } = await axios.put(`${backendUrl}/api/employee/${currentUserId}/status`, { status: 'Active' });
+        if(data.success) {
+            setCheckInStatus(true); // Green
+            setCheckInTime(data.time);
+        }
+      } catch (error) { console.error(error); }
+    } 
+    
+    else if (checkInStatus === true) {
+      // Prevent checkout if break is active
+      if (breakStatus === true) return alert("Please end your break before checking out.");
+
+      try {
+        const { data } = await axios.put(`${backendUrl}/api/employee/${currentUserId}/status`, { status: 'Inactive' });
+        if(data.success) {
+            setCheckInStatus(false); // Red
+            setCheckOutTime(data.time);
+        }
+      } catch (error) { console.error(error); }
+    }
+  };
+
+  const handleBreakToggle = async () => {
+    if (!currentUserId) return;
+    // Prevent break if not checked in or if checked out
+    if (checkInStatus !== true) return; 
+
+    // A. Start Break (Grey -> Green)
+    if (breakStatus === null) {
+        try {
+            const { data } = await axios.put(`${backendUrl}/api/employee/${currentUserId}/break`);
+            if(data.success) {
+                setBreakStatus(true); // Green
+                setBreakHistory(data.history);
+            }
+        } catch (error) { console.error(error); }
+    }
+    // B. End Break (Green -> Red)
+    else if (breakStatus === true) {
+        try {
+            const { data } = await axios.put(`${backendUrl}/api/employee/${currentUserId}/break`);
+            if(data.success) {
+                setBreakStatus(false); // Red
+                setBreakHistory(data.history);
+            }
+        } catch (error) { console.error(error); }
+    }
+  };
+
+  
+  const mainBtnClass = checkInStatus === null ? 'white' : (checkInStatus === true ? 'green' : 'red');
+  
+ 
+  const breakBtnClass = breakStatus === null ? 'white' : (breakStatus === true ? 'green' : 'red');
+
+  const isBreakDisabled = checkInStatus !== true;
 
   return (
     <div className="dashboard-container">
@@ -257,7 +207,7 @@ const Dashboard = () => {
               <div 
                 className={`toggle-btn ${mainBtnClass}`} 
                 onClick={handleMainToggle}
-                style={{ cursor: checkOutTime ? 'not-allowed' : 'pointer' }}
+                style={{ cursor: checkInStatus === false ? 'not-allowed' : 'pointer' }}
               />
             </div>
           </div>
@@ -268,19 +218,21 @@ const Dashboard = () => {
                  <div className="text-row">
                   <div className="time-group">
                     <span className="label">Break</span>
-                    <span className="value">{breakStartTime || "--:-- __"}</span>
+                    {/* Show Start Time of most recent break */}
+                    <span className="value">{breakHistory[0]?.break || "--:-- __"}</span>
                   </div>
                   <div className="time-group">
                     <span className="label">Ended</span>
-                    <span className="value">{breakEndTime || "--:-- __"}</span>
+                     {/* Show End Time of most recent break */}
+                    <span className="value">{breakHistory[0]?.ended !== "..." ? breakHistory[0]?.ended : "--:-- __"}</span>
                   </div>
                 </div>
                 <div 
                   className={`toggle-btn ${breakBtnClass}`} 
                   onClick={handleBreakToggle}
                   style={{ 
-                    cursor: (!checkInTime || checkOutTime || hasTakenBreak) ? 'not-allowed' : 'pointer',
-                    opacity: (!checkInTime || checkOutTime) ? 0.5 : 1 
+                    cursor: isBreakDisabled || breakStatus === false ? 'not-allowed' : 'pointer',
+                    opacity: isBreakDisabled ? 0.5 : 1 
                   }}
                 />
               </div>

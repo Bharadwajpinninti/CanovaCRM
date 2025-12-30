@@ -74,7 +74,7 @@ export  const updateProfileName = async (req, res) => {
 export const updateEmployeeStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body; // Expects { status: 'Active' } or { status: 'Inactive' }
+    const { status } = req.body; 
 
     const updatedEmployee = await Employee.findByIdAndUpdate(
       id,
