@@ -103,10 +103,12 @@ export const getDashboardStats = async (req, res) => {
 
             const dailyTotal = dailyLeads.length;
             const dailyClosed = dailyLeads.filter(l => l.status && l.status.toLowerCase() === 'closed').length;
+            const dailyAssignedCount = dailyLeads.filter(l => l.assignedTo).length;
 
             let percentage = 0;
-            if (dailyTotal > 0) {
-                percentage = Math.round((dailyClosed / dailyTotal) * 100);
+            // 3. Divide Closed by Assigned
+            if (dailyAssignedCount > 0) {
+                percentage = Math.round((dailyClosed / dailyAssignedCount) * 100);
             }
 
             chartData.push({ day: dayString, value: percentage });
