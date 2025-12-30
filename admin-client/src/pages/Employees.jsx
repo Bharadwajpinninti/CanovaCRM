@@ -115,13 +115,6 @@ const Employees = () => {
   const handleDelete = async (targetId) => {
     const isBulkDelete = selectedIds.includes(targetId) && selectedIds.length > 1;
     const idsToDelete = isBulkDelete ? selectedIds : [targetId];
-
-    const message = isBulkDelete 
-      ? `Delete ${idsToDelete.length} selected employees?` 
-      : "Delete this employee?";
-
-    if (!window.confirm(message)) return;
-
     try {
       const payload = isBulkDelete ? { ids: idsToDelete } : { id: targetId };
       const { data } = await axios.delete(`${backendUrl}/api/admin/delete-employee`, { data: payload });

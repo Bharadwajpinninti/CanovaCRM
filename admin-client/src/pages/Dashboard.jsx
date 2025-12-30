@@ -165,8 +165,8 @@ const Dashboard = () => {
                                         tickLine={false} 
                                         tick={{ fill: '#6B7280', fontSize: 11 }} 
                                         tickFormatter={(value) => `${value}%`} 
-                                        domain={[0, 60]} // Scale
-                                        ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80,90,100]} // Steps
+                                        domain={[0, 100]} // Scale
+                                        ticks={[0,20, 40, 60, 80, 100]} // Steps
                                     />
                                     <Bar dataKey="value" fill="#D1D5DB" radius={[10, 10, 0, 0]} />
                                 </BarChart>

@@ -8,9 +8,13 @@
 }
 
 /* --- BUTTONS --- */
-.btn-group { display: flex; gap: 22px; }
+.btn-group {
+  display: flex;
+  gap: 22px;
+}
 
-.btn-manual, .btn-csv {
+.btn-manual,
+.btn-csv {
   background: #D1D5DB;
   border: none;
   color: #1F2937;
@@ -22,7 +26,8 @@
   transition: background 0.2s;
 }
 
-.btn-manual:hover, .btn-csv:hover {
+.btn-manual:hover,
+.btn-csv:hover {
   background: #9CA3AF;
   color: white;
 }
@@ -35,25 +40,38 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: auto;
+  /* Horizontal scrollbar if screen is narrow */
+  overflow-y: hidden;
   padding: 0 24px 20px 24px;
 }
 
 /* --- GRID LAYOUT --- */
 .leads-grid {
   display: grid;
-  grid-template-columns: 
-    40px        /* No */
-    1.2fr       /* Name */
-    2fr         /* Email */
-    0.8fr       /* Source */
-    1fr         /* Date */
-    1fr         /* Location */
-    0.8fr       /* Lang */
-    1.5fr       /* Assigned To */
-    0.8fr       /* Status */
-    0.6fr       /* Type */
-    1fr;        /* Scheduled Date */
+  grid-template-columns:
+    40px
+    /* No */
+    1.2fr
+    /* Name */
+    2fr
+    /* Email */
+    0.8fr
+    /* Source */
+    1fr
+    /* Date */
+    1fr
+    /* Location */
+    0.8fr
+    /* Lang */
+    1.5fr
+    /* Assigned To */
+    0.8fr
+    /* Status */
+    0.6fr
+    /* Type */
+    1fr;
+  /* Scheduled Date */
   gap: 10px;
   align-items: center;
 }
@@ -64,40 +82,41 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: #4B5563;
-  
+
   /* 👇 1. THIS ADDS THE HORIZONTAL LINE BELOW HEADING */
-  border-bottom: 2px solid #D1D5DB; 
-  
+  border-bottom: 2px solid #D1D5DB;
+
   margin-bottom: 20px;
   flex-shrink: 0;
-  
+
   /* 👇 2. PREVENTS HEADER TEXT FROM WRAPPING (Fixes "Scheduled Date") */
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
-/* --- BODY (SCROLLBAR REMOVED) --- */
+/* --- BODY (SCROLLBAR ADDED) --- */
 .leads-table-body {
   flex: 1;
-  /* 1. REMOVED SCROLLBAR HERE */
-  overflow: hidden; 
+  /* CHANGED: Allow vertical scroll if screen is small */
+  overflow-y: auto; 
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Slightly tighter gap */
+  gap: 15px;
+  /* Slightly tighter gap */
 }
 
 /* --- ROW CARDS (HEIGHT DECREASED + BG) --- */
 .leads-row {
-  border: 1px solid #9CA3AF; 
+  border: 1px solid #9CA3AF;
   border-radius: 8px;
-  
-  /* 2. DECREASED HEIGHT (Padding reduced) */
-  padding: 6px 12px; 
 
-  background-color: #F9FAFB; 
-  
+  /* 2. DECREASED HEIGHT (Padding reduced) */
+  padding: 6px 12px;
+
+  background-color: #F9FAFB;
+
   /* 👇 TEXT COLOR (Must be dark since background is light) */
   color: #111827;
-  
+
   font-size: 0.85rem;
   color: #111827;
   font-weight: 500;
@@ -116,18 +135,24 @@
 
 /* Capitalize ONLY the Language column (7th item) */
 .leads-row div:nth-child(7) {
-    text-transform: capitalize;
+  text-transform: capitalize;
 }
+
 /* Leads.css */
-.no-data{
+.no-data {
   display: flex;
-  justify-content: center; /* Horizontal Center */
-  align-items: center;     /* Vertical Center */
-  height: 300px;           /* Gives it height so it sits in the middle */
+  justify-content: center;
+  /* Horizontal Center */
+  align-items: center;
+  /* Vertical Center */
+  height: 300px;
+  /* Gives it height so it sits in the middle */
   width: 100%;
-  
-  color: #9CA3AF;          /* Soft Grey (Not too black, not too light) */
-  font-size: 1.1rem;       /* Slightly larger than normal text */
+
+  color: #9CA3AF;
+  /* Soft Grey (Not too black, not too light) */
+  font-size: 1.1rem;
+  /* Slightly larger than normal text */
   font-weight: 500;
   letter-spacing: 0.5px;
 }
