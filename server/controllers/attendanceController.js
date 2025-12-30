@@ -1,5 +1,6 @@
 import Employee from '../models/Employee.js';
 
+// --- 1. GET DASHBOARD STATUS ---
 export const getDashboardStatus = async (req, res) => {
     try {
         const { id } = req.params;
@@ -17,7 +18,6 @@ export const getDashboardStatus = async (req, res) => {
             emp.breakStatus = null;
             emp.lastCheckInTime = null;
             emp.lastCheckOutTime = null;
-            
             await emp.save();
         }
 
@@ -35,28 +35,33 @@ export const getDashboardStatus = async (req, res) => {
     }
 };
 
-
+// --- 2. TOGGLE ATTENDANCE (Check In / Check Out) ---
 export const toggleAttendance = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body; 
-        const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        
+        const timeNow = new Date().toLocaleTimeString('en-US', { 
+            timeZone: 'Asia/Kolkata', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
 
         const emp = await Employee.findById(id);
         
-        // CASE A: CHECK IN (Grey -> Green)
         if (status === 'Active') {
             emp.status = 'Active';
-            emp.checkInStatus = true;    
+            emp.checkInStatus = true;      
             emp.lastCheckInTime = timeNow; 
             emp.lastCheckOutTime = null;   
             emp.breakStatus = null;        
         } 
-
         else {
             emp.status = 'Inactive';
-            emp.checkInStatus = false;    
+            emp.checkInStatus = false;     
             emp.lastCheckOutTime = timeNow; 
+            
             if (emp.breakStatus === true) {
                 emp.breakStatus = false;
             }
@@ -74,27 +79,27 @@ export const toggleAttendance = async (req, res) => {
 export const toggleBreak = async (req, res) => {
     try {
         const { id } = req.params;
-        const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const todayDate = new Date().toLocaleDateString();
+
+        const timeNow = new Date().toLocaleTimeString('en-US', { 
+            timeZone: 'Asia/Kolkata', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        const todayDate = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' });
 
         const emp = await Employee.findById(id);
 
-        
         if (emp.breakStatus === null) {
             emp.breakStatus = true; 
-            
-            
             emp.breakHistory.unshift({ 
                 break: timeNow, 
                 ended: "...", 
                 date: todayDate 
             });
         } 
-        
         else if (emp.breakStatus === true) {
-            emp.breakStatus = false;
-            
-          
+            emp.breakStatus = false; 
             if (emp.breakHistory.length > 0) {
                 emp.breakHistory[0].ended = timeNow;
             }
