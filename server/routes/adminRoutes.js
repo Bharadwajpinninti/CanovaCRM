@@ -19,4 +19,4 @@ adminRouter.get('/employees', getAllEmployees); // GET: List
 adminRouter.put('/edit-employee', editEmployee);    
 adminRouter.delete('/delete-employee', deleteEmployee);
 
-export default adminRouter;
+export default adminRouter;  
